@@ -5,8 +5,15 @@ from django.views import generic
 from budget.models import Transaction, Account, AccountCategory
 
 def index(request):
-    latest_transaction_list = Transaction.objects.order_by('-id')[:5]
-    context = {'latest_transaction_list': latest_transaction_list}
+    categories = AccountCategory.objects.all().exclude(name='Bank Accounts')
+    bank_category = AccountCategory.objects.get(name='Bank Accounts')
+    context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
+    data = []
+    for cat in categories:
+    	entry = {'cat': cat}
+    	entry['accounts'] = Account.objects.filter(category=cat)
+    	data.append(entry)
+    context['data'] = data
     return render(request, 'budget/index.html', context)
 
 def transaction(request, tid):

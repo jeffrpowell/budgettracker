@@ -1,5 +1,9 @@
 {% extends "budget/base.html" %}
 
+{% block breadcrumb %}
+	<li class="active"><a href="{% url 'budget:category' category.id %}">{{ category.name }}</a></li>
+{% endblock %}
+
 {% block content %}
 	<div class="row">
 	{% if category %}

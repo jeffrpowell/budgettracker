@@ -1,5 +1,9 @@
 {% extends "budget/base.html" %}
 
+{% block breadcrumb %}
+	<li class="active"><a href="{% url 'budget:transaction' trans.id %}">Transaction</a></li>
+{% endblock %}
+
 {% block content %}
 	<div class="row">
 	{% if trans %}
@@ -11,9 +15,9 @@
 		</div>
 		<div class="col-xs-4">
 			<h3>From</h3>
-			{{ trans.from_account }}
+			<a href="{% url 'budget:account' trans.from_account.id %}">{{ trans.from_account }}</a>
 			<h3>To</h3>
-			{{ trans.to_account }}
+			<a href="{% url 'budget:account' trans.to_account.id %}">{{ trans.to_account }}</a>
 		</div>
 	</div>
 	<div class="row">
