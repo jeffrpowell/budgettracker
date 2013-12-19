@@ -36,5 +36,8 @@ def category(request, cid):
 		'accounts': accounts
 	})
 
-def addtransaction(request):
-    return HttpResponse("You're voting on poll.")
+def addtransaction(request, to_account=None):
+	context = {}
+	if to_account:
+		context['to_account'] = Account.objects.get(pk=to_account)
+	return render(request, 'budget/addtransaction.html', context)

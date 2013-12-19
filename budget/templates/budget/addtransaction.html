@@ -1,10 +1,19 @@
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% extends "budget/base.html" %}
 
-<!--<form action="{% url 'polls:addtransaction' %}" method="post">
-{% csrf_token %}
-<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
-<label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
-<input type="submit" value="Vote" />
-</form>-->
+{% block content %}
+	<div class="row">
+		<div class="col-xs-12">
+			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+			
+			<form action="{% url 'budget:addtransaction' %}" method="post">
+			{% csrf_token %}
+			{% if to_account %}
+				{{ to_account }}
+			{% endif %}
+			<input type="submit" value="Save" />
+			</form>
+		</div>
+	</div>
+{% endblock %}
 
-hello...
+

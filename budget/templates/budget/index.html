@@ -24,7 +24,7 @@
 					<tr>
 						<td><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></td>
 						<td>$</td><td>${{ acct.balance }}</td><td>$</td>
-						<td><a href="{% url 'budget:addtransaction' %}">Add Purchase</a></td></tr>
+						<td><a href="{% url 'budget:addtransaction' acct.id %}">Add Purchase</a></td></tr>
 				{% endfor %}
 			{% endfor %}
 			</table>
