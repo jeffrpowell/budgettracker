@@ -1,0 +1,28 @@
+{% extends "budget/base.html" %}
+
+{% block content %}
+	<div class="row">
+	{% if trans %}
+		<div class="col-xs-4">
+			<h3>Date</h3>
+			{{ trans.date }}
+			<h3>Amount</h3>
+			${{ trans.amount }}
+		</div>
+		<div class="col-xs-4">
+			<h3>From</h3>
+			{{ trans.from_account }}
+			<h3>To</h3>
+			{{ trans.to_account }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-8">
+			<h3>Memo</h3>
+			{{ trans.memo }}
+		</div>
+	{% else %}
+		Empty Transaction
+	{% endif %}
+	</div>
+{% endblock %}

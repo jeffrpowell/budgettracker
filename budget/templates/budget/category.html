@@ -1,0 +1,22 @@
+{% extends "budget/base.html" %}
+
+{% block content %}
+	<div class="row">
+	{% if category %}
+		<div class="col-xs-12">
+			{% if "Accounts" in category.name %}
+				<h2>{{ category.name }}</h2>
+			{% else %}
+				<h2>{{ category.name }} Accounts</h2>
+			{% endif %}
+			<ul>
+				{% for acct in accounts %}
+					<li><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	{% else %}
+		Empty Account
+	{% endif %}
+	</div>
+{% endblock %}
