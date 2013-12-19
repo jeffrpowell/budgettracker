@@ -7,7 +7,7 @@
 	{% if latest_transaction_list %}
 		<ul>
 		{% for t in latest_transaction_list %}
-			<li><a href="{% url 'budget:detail' t.id %}">{{ t.amount }}</a></li>
+			<li><a href="{% url 'budget:transaction' t.id %}">{{ t.amount }}</a></li>
 		{% endfor %}
 		</ul>
 	{% else %}

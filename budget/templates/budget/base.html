@@ -9,20 +9,61 @@
 </head>
 
 <body>
-	<div id="topbanner">
-	  <div id="title">
-		{% block visualtitle %}
-		<a href="{% url 'budget:index' %}">Budget Tracker</a>
-		{% endblock %}
-	  </div>
+	<div id="topmenu">
+	{% block menu %}
+	<nav class="navbar navbar-default navbar-inverse" role="navigation">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="{% url 'budget:index' %}">Budget Tracker</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav">
+		  <li class="active"><a href="#">Link</a></li>
+		  <li><a href="#">Link</a></li>
+		  <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+			  <li><a href="#">Action</a></li>
+			  <li><a href="#">Another action</a></li>
+			  <li><a href="#">Something else here</a></li>
+			  <li class="divider"></li>
+			  <li><a href="#">Separated link</a></li>
+			  <li class="divider"></li>
+			  <li><a href="#">One more separated link</a></li>
+			</ul>
+		  </li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+		  <li><a href="#">Link</a></li>
+		  <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+			  <li><a href="#">Action</a></li>
+			  <li><a href="#">Another action</a></li>
+			  <li><a href="#">Something else here</a></li>
+			  <li class="divider"></li>
+			  <li><a href="#">Separated link</a></li>
+			</ul>
+		  </li>
+		</ul>
+		<form class="navbar-form navbar-right" role="search">
+		  <div class="form-group">
+			<input type="text" class="form-control" placeholder="Search">
+		  </div>
+		  <button type="submit" class="btn btn-default">Submit</button>
+		</form>
+	  </div><!-- /.navbar-collapse -->
+	</nav>
+	{% comment %}<ul class="nav nav-pills">
+	  <a class="navbar-brand" href="#">Budget Tracker</a>
+	  <li class="active"><a href="#">Home</a></li>
+	  <li><a href="#">Profile</a></li>
+	  <li><a href="#">Messages</a></li>
+	</ul>{% endcomment %}
 
-	  <div id="topmenu">
-		{% block menu %}
-		{% endblock %}
-	  </div>
+	{% endblock %}
 	</div>
 	  
-	<div id="content" class="container well">
+	<div id="content" class="container">
 		{% if error %}
 			<div class="row">
 			<div class="error col-xs-12">{{ error }}</div>
