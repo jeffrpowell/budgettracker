@@ -1,0 +1,33 @@
+{% extends "budget/base.html" %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-6">
+			<h3>{{ bank_category.cat.name }}</h3>
+			
+			<table class="table">
+				<tr><th>Accounts</th><th>Balance</th></tr>
+				{% for acct in bank_category.accounts %}
+					<tr><td><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></td><td>${{ acct.balance }}</td></tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-11">
+			<h3>Budget</h3>
+			<table class="table">
+			<tr><th>Accounts</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
+			{% for category in data %}
+				<tr><td><h4>{{ category.cat.name }}</h4></td><td colspan="4"></td></tr>
+				{% for acct in category.accounts %}
+					<tr>
+						<td><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></td>
+						<td>$</td><td>${{ acct.balance }}</td><td>$</td>
+						<td><a href="{% url 'budget:addtransaction' %}">Add Purchase</a></td></tr>
+				{% endfor %}
+			{% endfor %}
+			</table>
+		</div>
+	</div>
+{% endblock %}

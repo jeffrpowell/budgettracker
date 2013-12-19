@@ -1,0 +1,46 @@
+{% extends "budget/base.html" %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'budget:category' account.category.id %}">{{ account.category.name }}</a></li>
+	<li class="active"><a href="{% url 'budget:account' account.id %}">{{ account.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+	{% if account %}
+		<div class="col-xs-12">
+		<h2>Account Information</h2>
+			<div class="col-xs-4">
+				<h3>Category</h3>
+				<a href="{% url 'budget:category' account.category.id %}">{{ account.category }}</a>
+			</div>
+			<div class="col-xs-4">
+				<h3>Account Name</h3>
+				{{ account.name }}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+		<h2>Transactions</h2>
+			<div class="col-xs-12">
+				<table class="table">
+				<tr><th>Date</th><th>Account</th><th>Deposit</th><th>Withdrawal</th><th>Transaction Details</th></tr>
+				{% for t in transactions %}
+					<tr><td>{{ t.date }}</td>
+					{% if t.to_account|cut:" " == account.name|cut:" " %}
+						<td><a href="{% url 'budget:account' t.from_account.id %}">{{ t.from_account }}</a></td><td>${{ t.amount }}</td><td></td>
+					{% else %}
+						<td><a href="{% url 'budget:account' t.to_account.id %}">{{ t.to_account }}</a></td><td></td><td>${{ t.amount }}</td>
+					{% endif %}
+					<td><a href="{% url 'budget:transaction' t.id %}">Details</a></td></tr>
+				{% endfor %}
+				<tr><td colspan="2"></td><td><strong>Balance:</strong></td><td>${{ account.balance }}</td><td></td></tr>
+				</table>
+			</div>
+		</div>
+	{% else %}
+		Empty Account
+	{% endif %}
+	</div>
+{% endblock %}
