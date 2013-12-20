@@ -22,9 +22,9 @@
 				<tr><td><h4>{{ category.cat.name }}</h4></td><td colspan="4"></td></tr>
 				{% for acct in category.accounts %}
 					<tr>
-						<td><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></td>
-						<td>$</td><td>${{ acct.balance }}</td><td>$</td>
-						<td><a href="{% url 'budget:addtransaction' acct.id %}">Add Purchase</a></td></tr>
+						<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
+						<td>${{ acct.pred }}</td><td>${{ acct.acct.balance }}</td><td>${{ acct.diff }}</td>
+						<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add Purchase</a></td></tr>
 				{% endfor %}
 			{% endfor %}
 			</table>
