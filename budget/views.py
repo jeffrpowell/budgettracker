@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
+from decimal import Decimal
 
 from budget.models import Transaction, Account, AccountCategory, TransactionForm
 
@@ -10,14 +11,18 @@ def index(request):
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
     data = []
     for cat in categories:
-    	entry = {'cat': cat}
-    	accounts = Account.objects.filter(category=cat)
-    	all_accounts = []
-    	for acct in accounts:
-    		acct_entry = {'acct': acct, 'pred': 2, 'diff': 3}
-    		all_accounts.append(acct_entry)
-    	entry['accounts'] = all_accounts
-    	data.append(entry)
+        entry = {'cat': cat}
+        accounts = Account.objects.filter(category=cat)
+        all_accounts = []
+        for acct in accounts:
+            projections = Transaction.objects.filter(to_account=acct).filter(prediction=True)
+            proj_total = Decimal(0.0)
+            for proj in projections:
+                proj_total = proj_total + proj.amount
+            acct_entry = {'acct': acct, 'pred': proj_total, 'diff': proj_total-acct.balance}
+            all_accounts.append(acct_entry)
+        entry['accounts'] = all_accounts
+        data.append(entry)
     context['data'] = data
     return render(request, 'budget/index.html', context)
 
