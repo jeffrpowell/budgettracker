@@ -9,4 +9,7 @@ urlpatterns = patterns('',
     url(r'^addtransaction/$', views.addtransaction, name='addtransaction'),
     url(r'^addtransaction/(?P<to_account>\d+)/$', views.addtransaction, name='addtransaction'),
     url(r'^category/(?P<cid>\d+)/$', views.category, name='category'),
+    
+    ### AJAX URL ###
+    url(r'^projection/$', views.set_projection, name='set_projection'),
 )

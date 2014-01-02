@@ -2,6 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
 from decimal import Decimal
+from django.core.serializers import serialize
+from django.utils import simplejson as json
+
 
 from budget.models import Transaction, Account, AccountCategory, TransactionForm
 
@@ -16,9 +19,10 @@ def index(request):
         all_accounts = []
         for acct in accounts:
             projections = Transaction.objects.filter(to_account=acct).filter(prediction=True)
-            proj_total = Decimal(0.0)
-            for proj in projections:
-                proj_total = proj_total + proj.amount
+            if projections:
+            	proj_total = projections[0].amount
+            else:
+            	proj_total = Decimal(0.00)
             acct_entry = {'acct': acct, 'pred': proj_total, 'diff': proj_total-acct.balance}
             all_accounts.append(acct_entry)
         entry['accounts'] = all_accounts
@@ -67,3 +71,22 @@ def addtransaction(request, to_account=None):
     if to_account:
     	context['to_account'] = Account.objects.get(pk=to_account)
    	return render(request, 'budget/addtransaction.html', context)
+   	
+def set_projection(request):
+	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True)
+	if trans:
+		trans = trans[0]
+		trans.amount = request.POST['amount']
+		trans.save()
+	else:
+		trans = Transaction()
+		trans.to_account = Account.objects.get(pk=request.POST['account_id'])
+		trans.from_account = Account.objects.get(name="Checking Account")
+		trans.prediction = True
+		trans.amount = Decimal(request.POST['amount'])
+		trans.memo = 'Projection'
+		trans.save()
+	#return HttpResponse(serialize('json', (trans,)), mimetype="application/json")
+	
+	#need to give back the new difference amount
+	return HttpResponse(Decimal(trans.amount) - trans.to_account.balance)
