@@ -8,10 +8,7 @@ from django.utils import simplejson as json
 
 from budget.models import Transaction, Account, AccountCategory, TransactionForm
 
-def index(request):
-    categories = AccountCategory.objects.all().exclude(name='Bank Accounts')
-    bank_category = AccountCategory.objects.get(name='Bank Accounts')
-    context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
+def map_categories(categories):
     data = []
     for cat in categories:
         entry = {'cat': cat}
@@ -27,7 +24,13 @@ def index(request):
             all_accounts.append(acct_entry)
         entry['accounts'] = all_accounts
         data.append(entry)
-    context['data'] = data
+    return data
+
+def index(request):
+    bank_category = AccountCategory.objects.get(name='Bank Accounts')
+    context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
+    context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True))
+    context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False))
     return render(request, 'budget/index.html', context)
 
 def transaction(request, tid):

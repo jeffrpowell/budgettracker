@@ -3,6 +3,7 @@ from django.forms import ModelForm
 
 class AccountCategory(models.Model):
 	name = models.CharField(max_length=30)
+	income_accounts = models.NullBooleanField()
 	def __unicode__(self):
 		return self.name
 	
