@@ -1,14 +1,14 @@
 {% extends "budget/base.html" %}
 
 {% block breadcrumb %}
-	<li><a href="{% url 'budget:category' to_account.category.id %}">{{ to_account.category.name }}</a></li>
-	<li><a href="{% url 'budget:account' to_account.id %}">{{ to_account.name }}</a></li>
+	<li><a href="{% url 'budget:category' account.category.id %}">{{ to_account.category.name }}</a></li>
+	<li><a href="{% url 'budget:account' account.id %}">{{ to_account.name }}</a></li>
 {% endblock %}
 
 {% block content %}
 	<div class="row">
 		<div class="col-xs-12">
-			<h2>New Deposit under {{ to_account }}</h2>
+			<h2>New Deposit under {{ account }}</h2>
 			<small>Automatically added to checking account</small>
 			<br /><br />
 		</div>
@@ -18,7 +18,7 @@
 			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
 			<form role="form" action="{% url 'budget:addtransaction' %}" method="post">
 				{% csrf_token %}
-				<input type="hidden" id="id_to_account" name="to_account" value="{{ to_account.id }}">
+				<input type="hidden" id="id_account" name="account" value="{{ account.id }}">
 				<div class="form-group">
 					<label for="id_amount">Amount Deposited:</label>
 					{# Mimics {{ form.amount }}, but done manually to add class to input #}
@@ -30,7 +30,7 @@
 					<input id="id_memo" type="text" name="memo" maxlength="300" class="form-control">
 				</div>
 				<div class="form-group">
-					<input type="submit" value="Save" />
+					<input type="submit" class="btn btn-primary" value="Save" />
 				</div>
 			</form>
 		</div>

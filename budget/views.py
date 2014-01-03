@@ -54,7 +54,10 @@ def get_account_amounts_by_date(account_id, month_str, year_str):
 	acct = Account.objects.get(pk=account_id)
 	
 	projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(dates[0], dates[1]))
-	actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+	if acct.is_income():
+		actuals = Transaction.objects.filter(from_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+	else:
+		actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
 	
 	if projections:
 		ret['proj'] = projections[0].amount
@@ -65,10 +68,13 @@ def get_account_amounts_by_date(account_id, month_str, year_str):
 	for act in actuals:
 		actual += act.amount
 	ret['actual'] = actual
-	ret['diff'] = ret['proj'] - ret['actual']
+	if acct.is_income():
+		ret['diff'] = ret['actual'] - ret['proj']
+	else:
+		ret['diff'] = ret['proj'] - ret['actual']
 	return ret
 
-def map_categories(categories, month, year):
+def map_categories(categories, month, year, income):
     data = {}
     entries = []
     proj_total = Decimal(0.0)
@@ -88,7 +94,10 @@ def map_categories(categories, month, year):
     data['categories'] = entries
     data['act_total'] = act_total
     data['proj_total'] = proj_total
-    data['difference'] = proj_total - act_total
+    if income:
+        data['difference'] = act_total - proj_total
+    else:
+        data['difference'] = proj_total - act_total
     return data
 
 def index(request, month=None, year=None):
@@ -99,8 +108,8 @@ def index(request, month=None, year=None):
         year = today.year
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
-    context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year)
-    context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year)
+    context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year, True)
+    context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year, False)
     context['proj_total'] = context['income_categories']['proj_total'] - context['expense_categories']['proj_total'];
     context['act_total'] = context['income_categories']['act_total'] - context['expense_categories']['act_total'];
     context['difference'] = context['expense_categories']['difference'] - context['income_categories']['difference'];
@@ -147,24 +156,28 @@ def addtransaction(request, to_account=None):
         if form.is_valid():
             f = TransactionForm(request.POST)
             trans = f.save(commit = False)
-            trans.to_account = Account.objects.get(pk=request.POST['to_account'])
-            trans.from_account = Account.objects.get(name="Checking Account")
             trans.prediction = False
-            trans.save()
-            trans.to_account.balance = trans.to_account.balance + trans.amount
-            trans.to_account.save()
-            if trans.to_account.category.income_accounts:
+            account = Account.objects.get(pk=request.POST['account'])
+            if account.is_income():
+                trans.to_account = Account.objects.get(name="Checking Account")
+                trans.from_account = account
+                trans.save()
                 trans.from_account.balance = trans.from_account.balance + trans.amount
             else:
+                trans.to_account = account
+                trans.from_account = Account.objects.get(name="Checking Account")
+                trans.save()
                 trans.from_account.balance = trans.from_account.balance - trans.amount
+            trans.to_account.balance = trans.to_account.balance + trans.amount
+            trans.to_account.save()
             trans.from_account.save()
             return HttpResponseRedirect('/budget/')
     else:
         context['form'] = TransactionForm()
     template = 'budget/addtransaction.html'
     if to_account:
-    	context['to_account'] = Account.objects.get(pk=to_account)
-    	if context['to_account'].category.income_accounts:
+    	context['account'] = Account.objects.get(pk=to_account)
+    	if context['account'].is_income():
     	    template = 'budget/adddeposit.html'
    	return render(request, template, context)
    	
@@ -185,4 +198,5 @@ def set_projection(request):
 	#return HttpResponse(serialize('json', (trans,)), mimetype="application/json")
 	
 	#need to give back the new difference amount
-	return HttpResponse(Decimal(trans.amount) - trans.to_account.balance)
+	amounts = get_account_amounts_by_date(trans.to_account.id, request.POST['month'], request.POST['year'])
+	return HttpResponse(amounts['diff'])

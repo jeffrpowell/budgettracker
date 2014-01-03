@@ -7,16 +7,8 @@
 
 {% block content %}
 	<div class="row">
-		<div class="col-xs-6">
+		<div class="col-xs-9">
 			<h2>Transactions for {{ account.name }}</h2>
-		</div>
-		<div class="col-xs-3 col-xs-offset-3 text-center">
-			<h3>Select Date</h3>
-			{% include "budget/month_selection.html" %}
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-12">
 			<br />
 			<table class="table">
 			<tr><th>Date</th><th>Account</th><th>Deposit</th><th>Withdrawal</th><th>Transaction Details</th></tr>
@@ -31,6 +23,10 @@
 			{% endfor %}
 			<tr><td colspan="2"></td><td><strong>Balance:</strong></td><td>${{ balance }}</td><td></td></tr>
 			</table>
+		</div>
+		<div class="col-xs-3 text-center">
+			<h3>Select Date</h3>
+			{% include "budget/month_selection.html" %}
 		</div>
 	</div>
 {% endblock %}

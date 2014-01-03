@@ -1,4 +1,15 @@
 $(function(){
+	//-------------------------------------------------
+	//		Actions to execute when page loads
+	//-------------------------------------------------
+	$('.change-projection-text').hide(); //hide textboxes
+	$('td:contains("-")').each(function(){
+		var text = $(this).text().replace(/\$/, '');
+		if ($.isNumeric(text)){
+			$(this).addClass('negative'); //color negative values
+		}
+	});
+	
 	//http://www.infiniterecursion.ca/blog/django/2011/1/30/django-and-jquery-ajax-patterns/
 	//http://stackoverflow.com/questions/5100539/django-csrf-check-failing-with-an-ajax-post-request
 	$.ajaxSetup({
@@ -26,6 +37,16 @@ $(function(){
 		} 
 	});
 	
+	//What happens when "Change Projection" link is clicked
+	$('.change-projection-link').click(function(){
+		var this_id = this.id.substring(5); //Extract account id
+		$('td#proj_'+this_id).hide(); //Hide the static label
+		$('td#proj_text_'+this_id+' input').val($('td#proj_'+this_id).html().substring(1)); //Put the static label value in textbox
+		$('td#proj_text_'+this_id).show(); //show text box div
+		$('td#proj_text_'+this_id+' input').focus(); //give focus to textbox, setting off our handler
+		return false; //don't reload the page because we've clicked on a link
+	});
+	
 	//Handler for keypresses in edit textboxes
 	$('.change-projection-text input').keydown(function(event){
 		if (event.which == 13){ //Enter keycode
@@ -35,7 +56,12 @@ $(function(){
 			if ($.isNumeric($(this).val())){ //If valid input
 				$('td#proj_'+this_id).text('$'+$(this).val()).show(); //Update static label
 				//Submit change to server
-				var post_data = {account_id: this_id, amount: $(this).val()};
+				var post_data = {
+					account_id: this_id, 
+					amount: $(this).val(), 
+					month: $('#month-buttons button.active').attr('id'), 
+					year: $('#year-select').text().replace(/"/, '').trim()
+				};
 				$.post('projection/', post_data, function(data){
 					if (data || data == 0){
 						$('td#diff_'+this_id).text('$'+data); //Update Difference amount
@@ -52,26 +78,5 @@ $(function(){
 	//Highlight text in textbox when it receives focus
 	$('.change-projection-text input').focus(function(){
 		$(this).select(); 
-	});
-	
-	//-------------------------------------------------
-	//		Actions to execute when page loads
-	//-------------------------------------------------
-	$('.change-projection-text').hide(); //hide textboxes
-	$('td:contains("-")').each(function(){
-		var text = $(this).text().replace(/\$/, '');
-		if ($.isNumeric(text)){
-			$(this).addClass('negative'); //color negative values
-		}
-	});
-	
-	//What happens when "Change Projection" link is clicked
-	$('.change-projection-link').click(function(){
-		var this_id = this.id.substring(5); //Extract account id
-		$('td#proj_'+this_id).hide(); //Hide the static label
-		$('td#proj_text_'+this_id+' input').val($('td#proj_'+this_id).html().substring(1)); //Put the static label value in textbox
-		$('td#proj_text_'+this_id).show(); //show text box div
-		$('td#proj_text_'+this_id+' input').focus(); //give focus to textbox, setting off our handler
-		return false; //don't reload the page because we've clicked on a link
 	});
 });

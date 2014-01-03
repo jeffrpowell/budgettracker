@@ -13,6 +13,8 @@ class Account(models.Model):
 	category = models.ForeignKey(AccountCategory)
 	def __unicode__(self):
 		return self.name
+	def is_income(self):
+		return self.category.income_accounts
 
 class Transaction(models.Model):
 	date = models.DateField(auto_now_add=True)
@@ -22,7 +24,7 @@ class Transaction(models.Model):
 	prediction = models.BooleanField()
 	memo = models.CharField(max_length=300, default=None, blank=True, null=True)
 	def __unicode__(self):
-		return unicode(self.amount)
+		return "$"+unicode(self.amount)+" : "+self.from_account.name+" -> "+self.to_account.name
                 
 class TransactionForm(ModelForm):
     class Meta:
