@@ -74,29 +74,4 @@ $(function(){
 		$('td#proj_text_'+this_id+' input').focus(); //give focus to textbox, setting off our handler
 		return false; //don't reload the page because we've clicked on a link
 	});
-	
-	//MONTH - YEAR SELECTION LOGIC
-	
-	//Select month button
-	$('#'+$('#start-month').val()).button('toggle');
-	
-	$('#month-buttons button').click(function(){
-		$('#month-buttons button.active').not(this).button('toggle'); //radio-button toggling
-		sendDateChangeAjax($(this).attr('id'), 0);
-	});
-	
-	$('#year-increase').click(function(){
-		sendDateChangeAjax($('#month-buttons button.active').attr('id'), 1);
-	});
-	
-	$('#year-decrease').click(function(){
-		sendDateChangeAjax($('#month-buttons button.active').attr('id'), -1);
-	});
-	
-	/* yearChange should be integers -1, 0, or 1*/
-	var sendDateChangeAjax = function(month, yearChange){
-		var year = $('#year-select').text().replace(/"/, '').trim();
-		year = parseInt(year) + yearChange;
-		window.location = '/budget/date/'+month+'/'+year+'/';
-	}
 });

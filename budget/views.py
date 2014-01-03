@@ -34,8 +34,7 @@ def month_abbr_to_int(month):
 	if month == 'Dec':
 		return 12
 
-def get_account_amounts_by_date(account_id, month_str, year_str):
-	ret = {}
+def start_end_days_of_month(month_str, year_str):
 	month = month_abbr_to_int(month_str)
 	year = int(year_str)
 	start_date = datetime.date(year, month, 1)
@@ -45,11 +44,17 @@ def get_account_amounts_by_date(account_id, month_str, year_str):
 		end_date = datetime.date(year, month, 31)
 	else:
 		end_date = datetime.date(year, month, 30)
+	return [start_date, end_date]
+
+def get_account_amounts_by_date(account_id, month_str, year_str):
+	ret = {}
+	
+	dates = start_end_days_of_month(month_str, year_str)
 	
 	acct = Account.objects.get(pk=account_id)
 	
-	projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(start_date, end_date))
-	actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(start_date, end_date))
+	projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(dates[0], dates[1]))
+	actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
 	
 	if projections:
 		ret['proj'] = projections[0].amount
@@ -107,12 +112,24 @@ def transaction(request, tid):
     trans = get_object_or_404(Transaction, pk=tid)
     return render(request, 'budget/transaction.html', {'trans': trans})
 
-def account(request, aid):
+def account(request, aid, month=None, year=None):
     account = get_object_or_404(Account, pk=aid)
-    transactions = Transaction.objects.filter(to_account=aid).filter(prediction=False) | Transaction.objects.filter(from_account=aid).filter(prediction=False)
+    today = datetime.date.today()
+    if (not month):
+        month = today.strftime('%b')
+    if (not year):
+        year = today.year
+    dates = start_end_days_of_month(month, year)
+    
+    transactions = Transaction.objects.filter(to_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1])) | Transaction.objects.filter(from_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+    
+    amounts = get_account_amounts_by_date(aid, month, year)
     return render(request, 'budget/account.html', {
     	'account': account,
-    	'transactions': transactions
+    	'transactions': transactions,
+    	'balance': amounts['actual'],
+    	'month': month,
+    	'year': year,
     })
     
 def category(request, cid):
