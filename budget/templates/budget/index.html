@@ -2,9 +2,20 @@
 
 {% block content %}
 	<div class="row">
-		<div class="col-xs-6">
+		<div class="col-xs-3">
 			<br />
-			<div class="panel panel-info">
+			<div class="panel">
+				<div class="panel-heading default-bg">
+					<h3 class="panel-title">Select Month</h3>
+				</div>
+				<div class="panel-body text-center">
+					{%  include "budget/month_selection.html" %}
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<br />
+			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">{{ bank_category.cat.name }}</h3>
 				</div>
@@ -16,56 +27,82 @@
 				</table>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-10">
-			<div class="panel panel-success">
+		<div class="col-xs-5">
+			<br />
+			<div class="panel panel-info">
 				<div class="panel-heading">
-					<h3 class="panel-title">Income Sources</h3>
+					<h3 class="panel-title">Summary</h3>
 				</div>
 				<table class="table table-bordered panel-body">
-				<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
-				{% for category in income_categories %}
-					<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
-					{% for acct in category.accounts %}
-						<tr>
-							<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
-							<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
-							<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
-								$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
-							<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
-							<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
-									<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
-					{% endfor %}
-				{% endfor %}
+					<tr><th></th><th>Projected</th><th>Actual</th><th class="default-bg">Difference</th></tr>
+					<tr><th>Income</th><td>$0</td><td>$0</td><td class="default-bg">$0</td></tr>
+					<tr><th>Expenses</th><td>$0</td><td>$0</td><td class="default-bg">$0</td></tr>
+					<tr class="default-bg"><th>Month Balance</th><td>$0</td><td>$0</td><td>$0</td></tr>
 				</table>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-xs-10">
-			<div class="panel panel-danger">
-				<div class="panel-heading">
-					<h3 class="panel-title">Expenses</h3>
+	<div class="panel-group" id="accordion">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+						<div class="panel-heading success-bg">
+							<h3 class="panel-title">Income Sources</h3>
+						</div>
+					</a>
+					<div  id="collapseOne" class="panel-collapse collapse">
+						<table class="table table-bordered panel-body">
+						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
+						{% for category in income_categories %}
+							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
+							{% for acct in category.accounts %}
+								<tr>
+									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
+									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
+									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
+										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
+									<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
+									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
+											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
+							{% endfor %}
+						{% endfor %}
+						</table>
+					</div>
 				</div>
-				<table class="table table-bordered panel-body">
-				<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
-				{% for category in expense_categories %}
-					<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
-					{% for acct in category.accounts %}
-						<tr>
-							<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
-							<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
-							<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
-								$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
-							<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
-							<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
-									<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
-					{% endfor %}
-				{% endfor %}
-				</table>
 			</div>
 		</div>
+		<br />
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+						<div class="panel-heading danger-bg">
+							<h3 class="panel-title">Expenses</h3>
+						</div>
+					</a>
+					<div  id="collapseTwo" class="panel-collapse collapse">
+						<table class="table table-bordered panel-body">
+						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
+						{% for category in expense_categories %}
+							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
+							{% for acct in category.accounts %}
+								<tr>
+									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
+									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
+									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
+										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
+									<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
+									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
+											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
+							{% endfor %}
+						{% endfor %}
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
 	</div>
 {% endblock %}
 

@@ -10,3 +10,27 @@
 #content{
 	background-color: #C0C0C0;
 }
+
+.success-bg {
+	background-color: #DFF0D8;
+}
+
+.danger-bg {
+	background-color: #F2DEDE;
+}
+
+.info-bg {
+	background-color: #D9EDF7;
+}
+
+.primary-bg {
+	background-color: #428BCA;
+}
+
+.warning-bg {
+	background-color: #FCF8E3;
+}
+
+.default-bg {
+	background-color: #F5F5F5;
+}

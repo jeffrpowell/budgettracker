@@ -55,7 +55,7 @@ $(function(){
 	});
 	
 	//Start by hiding textboxes
-	$('.change-projection-text').hide(); 
+	$('.change-projection-text').hide();
 	
 	//What happens when "Change Projection" link is clicked
 	$('.change-projection-link').click(function(){
@@ -66,4 +66,29 @@ $(function(){
 		$('td#proj_text_'+this_id+' input').focus(); //give focus to textbox, setting off our handler
 		return false; //don't reload the page because we've clicked on a link
 	});
+	
+	//MONTH - YEAR SELECTION LOGIC
+	
+	//Select month button
+	$('#jan').button('toggle');
+	
+	$('#month-buttons button').click(function(){
+		$('#month-buttons button.active').not(this).button('toggle'); //radio-button toggling
+		sendDateChangeAjax($(this).attr('id'));
+	});
+	
+	$('#year-increase').click(function(){
+		//$('#month-buttons button.active').id()
+		sendDateChangeAjax(1);
+	});
+	
+	$('#year-decrease').click(function(){
+		sendDateChangeAjax(2);
+		
+	});
+	
+	var sendDateChangeAjax = function(month){
+		var year = $('#year-select').text().replace(/"/, '').trim();
+		alert('howdy'+month+' '+year);
+	}
 });
