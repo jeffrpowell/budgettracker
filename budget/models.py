@@ -30,3 +30,15 @@ class TransactionForm(ModelForm):
     class Meta:
     	model = Transaction
     	fields = ['amount', 'memo']
+
+class NullAccountTransactionForm(ModelForm):
+	class Meta:
+		model = Transaction
+		fields = ['from_account', 'to_account', 'amount', 'memo']
+	#http://stackoverflow.com/questions/962226/need-help-with-django-modelform-how-to-filter-foreignkey-manytomanyfield
+	def __init__(self, *args, **kwargs):
+		super(NullAccountTransactionForm, self).__init__(*args, **kwargs)
+		if self.instance:
+			bank_category = AccountCategory.objects.get(name='Bank Accounts')
+			self.fields['from_account'].queryset = Account.objects.filter(category=bank_category)
+			self.fields['to_account'].queryset = Account.objects.filter(category=bank_category)

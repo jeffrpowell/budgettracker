@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.serializers import serialize
 from django.utils import simplejson as json
 
-from budget.models import Transaction, Account, AccountCategory, TransactionForm
+from budget.models import Transaction, Account, AccountCategory, TransactionForm, NullAccountTransactionForm
 import datetime
 
 def month_abbr_to_int(month):
@@ -53,25 +53,35 @@ def get_account_amounts_by_date(account_id, month_str, year_str):
 	
 	acct = Account.objects.get(pk=account_id)
 	
-	projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(dates[0], dates[1]))
-	if acct.is_income():
-		actuals = Transaction.objects.filter(from_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+	if (acct.category.income_accounts == None):
+		deposits = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+		withdrawals = Transaction.objects.filter(from_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+		balance = Decimal(0.0)
+		for dep in deposits:
+			balance += dep.amount
+		for wit in withdrawals:
+			balance -= wit.amount
+		ret['actual'] = balance
 	else:
-		actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+		projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(dates[0], dates[1]))
+		if acct.is_income():
+			actuals = Transaction.objects.filter(from_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+		else:
+			actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
 	
-	if projections:
-		ret['proj'] = projections[0].amount
-	else:
-		ret['proj'] = Decimal(0.00)
+		if projections:
+			ret['proj'] = projections[0].amount
+		else:
+			ret['proj'] = Decimal(0.00)
 	
-	actual = Decimal(0.0)
-	for act in actuals:
-		actual += act.amount
-	ret['actual'] = actual
-	if acct.is_income():
-		ret['diff'] = ret['actual'] - ret['proj']
-	else:
-		ret['diff'] = ret['proj'] - ret['actual']
+		actual = Decimal(0.0)
+		for act in actuals:
+			actual += act.amount
+		ret['actual'] = actual
+		if acct.is_income():
+			ret['diff'] = ret['actual'] - ret['proj']
+		else:
+			ret['diff'] = ret['proj'] - ret['actual']
 	return ret
 
 def map_categories(categories, month, year, income):
@@ -180,6 +190,24 @@ def addtransaction(request, to_account=None):
     	if context['account'].is_income():
     	    template = 'budget/adddeposit.html'
    	return render(request, template, context)
+
+def banktransaction(request):
+    context = {}
+    if request.method == 'POST':
+        form = NullAccountTransactionForm(request.POST)
+        if form.is_valid():
+            f = NullAccountTransactionForm(request.POST)
+            trans = f.save(commit = False)
+            trans.prediction = False
+            trans.save()
+            trans.to_account.balance = trans.to_account.balance + trans.amount
+            trans.to_account.save()
+            trans.from_account.balance = trans.from_account.balance - trans.amount
+            trans.from_account.save()
+            return HttpResponseRedirect('/budget/')
+    else:
+        context['form'] = NullAccountTransactionForm()
+   	return render(request, 'budget/banktransaction.html', context)
    	
 def set_projection(request):
 	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True)

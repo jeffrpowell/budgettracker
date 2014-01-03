@@ -1,0 +1,44 @@
+{% extends "budget/base.html" %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h2>Bank Account Transfer</h2>
+			<br /><br />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3">
+			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+			<form role="form" action="{% url 'budget:banktransaction' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="id_from_account">From account:</label>
+					{{ form.from_account }}
+				</div>
+				
+				<div class="form-group">
+					<label for="id_to_account">To account:</label>
+					{{ form.to_account }}
+				</div>
+				
+				<div class="form-group">
+					<label for="id_amount">Amount:</label>
+					<input id="id_amount" type="number" step="0.01" name="amount" class="form-control">
+				</div>
+				
+				<div class="form-group">
+					<label for="id_memo">Memo:</label>
+					<input id="id_memo" type="text" name="memo" maxlength="300" class="form-control">
+				</div>
+				
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" value="Save" />
+				</div>
+				
+			</form>
+		</div>
+	</div>
+{% endblock %}
+
+
