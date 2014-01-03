@@ -5,8 +5,8 @@ from decimal import Decimal
 from django.core.serializers import serialize
 from django.utils import simplejson as json
 
-
 from budget.models import Transaction, Account, AccountCategory, TransactionForm
+import datetime
 
 def map_categories(categories):
     data = []
@@ -26,12 +26,20 @@ def map_categories(categories):
         data.append(entry)
     return data
 
-def index(request):
+def index_date(request, month, year):
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True))
     context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False))
+    context['month'] = month
+    context['year'] = year
     return render(request, 'budget/index.html', context)
+
+def index(request):
+    today = datetime.date.today()
+    month = today.strftime('%b')
+    year = today.year
+    return index_date(request, month, year)
 
 def transaction(request, tid):
     trans = get_object_or_404(Transaction, pk=tid)

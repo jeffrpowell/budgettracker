@@ -32,5 +32,9 @@
 }
 
 .default-bg {
-	background-color: #F5F5F5;
+	background-color: /*#F5F5F5*/ #E8E8E8;
+}
+
+.glyphicon-chevron-left, .glyphicon-chevron-right{
+	cursor: pointer;
 }

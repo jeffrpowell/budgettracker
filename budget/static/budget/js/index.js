@@ -70,25 +70,25 @@ $(function(){
 	//MONTH - YEAR SELECTION LOGIC
 	
 	//Select month button
-	$('#jan').button('toggle');
+	$('#'+$('#start-month').val()).button('toggle');
 	
 	$('#month-buttons button').click(function(){
 		$('#month-buttons button.active').not(this).button('toggle'); //radio-button toggling
-		sendDateChangeAjax($(this).attr('id'));
+		sendDateChangeAjax($(this).attr('id'), 0);
 	});
 	
 	$('#year-increase').click(function(){
-		//$('#month-buttons button.active').id()
-		sendDateChangeAjax(1);
+		sendDateChangeAjax($('#month-buttons button.active').attr('id'), 1);
 	});
 	
 	$('#year-decrease').click(function(){
-		sendDateChangeAjax(2);
-		
+		sendDateChangeAjax($('#month-buttons button.active').attr('id'), -1);
 	});
 	
-	var sendDateChangeAjax = function(month){
+	/* yearChange should be integers -1, 0, or 1*/
+	var sendDateChangeAjax = function(month, yearChange){
 		var year = $('#year-select').text().replace(/"/, '').trim();
-		alert('howdy'+month+' '+year);
+		year = parseInt(year) + yearChange;
+		window.location = '/budget/'+month+'/'+year+'/';
 	}
 });
