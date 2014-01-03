@@ -72,7 +72,7 @@
 									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
-									<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
+									<td>${{ acct.act }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
 											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
 							{% endfor %}
@@ -102,7 +102,7 @@
 									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
-									<td>${{ acct.acct.balance }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
+									<td>${{ acct.act }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
 											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a></td></tr>
 							{% endfor %}

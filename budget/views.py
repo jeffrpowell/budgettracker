@@ -8,7 +8,62 @@ from django.utils import simplejson as json
 from budget.models import Transaction, Account, AccountCategory, TransactionForm
 import datetime
 
-def map_categories(categories):
+def month_abbr_to_int(month):
+	if month == 'Jan':
+		return 1
+	if month == 'Feb':
+		return 2
+	if month == 'Mar':
+		return 3
+	if month == 'Apr':
+		return 4
+	if month == 'May':
+		return 5
+	if month == 'Jun':
+		return 6
+	if month == 'Jul':
+		return 7
+	if month == 'Aug':
+		return 8
+	if month == 'Sep':
+		return 9
+	if month == 'Oct':
+		return 10
+	if month == 'Nov':
+		return 11
+	if month == 'Dec':
+		return 12
+
+def get_account_amounts_by_date(account_id, month_str, year_str):
+	ret = {}
+	month = month_abbr_to_int(month_str)
+	year = int(year_str)
+	start_date = datetime.date(year, month, 1)
+	if (month_str == 'Feb'):
+		end_date = datetime.date(year, month, 28)
+	elif (month_str in ['Jan', 'Mar', 'May', 'Jul', 'Aug', 'Oct', 'Dec']):
+		end_date = datetime.date(year, month, 31)
+	else:
+		end_date = datetime.date(year, month, 30)
+	
+	acct = Account.objects.get(pk=account_id)
+	
+	projections = Transaction.objects.filter(to_account=acct).filter(prediction=True).filter(date__range=(start_date, end_date))
+	actuals = Transaction.objects.filter(to_account=acct).filter(prediction=False).filter(date__range=(start_date, end_date))
+	
+	if projections:
+		ret['proj'] = projections[0].amount
+	else:
+		ret['proj'] = Decimal(0.00)
+	
+	actual = Decimal(0.0)
+	for act in actuals:
+		actual += act.amount
+	ret['actual'] = actual
+	ret['diff'] = ret['proj'] - ret['actual']
+	return ret
+
+def map_categories(categories, month, year):
     data = {}
     entries = []
     proj_total = Decimal(0.0)
@@ -18,15 +73,11 @@ def map_categories(categories):
         accounts = Account.objects.filter(category=cat)
         all_accounts = []
         for acct in accounts:
-            projections = Transaction.objects.filter(to_account=acct).filter(prediction=True)
-            if projections:
-            	proj = projections[0].amount
-            	proj_total += proj
-            else:
-            	proj = Decimal(0.00)
-            acct_entry = {'acct': acct, 'pred': proj, 'diff': proj_total-acct.balance}
+            data = get_account_amounts_by_date(acct.id, month, year)
+            proj_total += data['proj']
+            acct_entry = {'acct': acct, 'pred': data['proj'], 'act': data['actual'], 'diff': data['diff']}
             all_accounts.append(acct_entry)
-            act_total += acct.balance
+            act_total += data['actual']
         entry['accounts'] = all_accounts
         entries.append(entry)
     data['categories'] = entries
@@ -43,11 +94,11 @@ def index(request, month=None, year=None):
         year = today.year
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
-    context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True))
-    context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False))
+    context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year)
+    context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year)
     context['proj_total'] = context['income_categories']['proj_total'] - context['expense_categories']['proj_total'];
     context['act_total'] = context['income_categories']['act_total'] - context['expense_categories']['act_total'];
-    context['difference'] = context['income_categories']['difference'] - context['expense_categories']['difference'];
+    context['difference'] = context['expense_categories']['difference'] - context['income_categories']['difference'];
     context['month'] = month
     context['year'] = year
     return render(request, 'budget/index.html', context)

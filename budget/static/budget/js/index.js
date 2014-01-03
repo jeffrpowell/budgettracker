@@ -54,7 +54,9 @@ $(function(){
 		$(this).select(); 
 	});
 	
-	//Actions to execute when page loads
+	//-------------------------------------------------
+	//		Actions to execute when page loads
+	//-------------------------------------------------
 	$('.change-projection-text').hide(); //hide textboxes
 	$('td:contains("-")').each(function(){
 		var text = $(this).text().replace(/\$/, '');
