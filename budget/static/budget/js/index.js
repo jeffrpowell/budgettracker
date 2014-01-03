@@ -89,6 +89,6 @@ $(function(){
 	var sendDateChangeAjax = function(month, yearChange){
 		var year = $('#year-select').text().replace(/"/, '').trim();
 		year = parseInt(year) + yearChange;
-		window.location = '/budget/'+month+'/'+year+'/';
+		window.location = '/budget/date/'+month+'/'+year+'/';
 	}
 });

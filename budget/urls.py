@@ -4,7 +4,7 @@ from budget import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    url(r'^(?P<month>\w+)/(?P<year>\d+)/$', views.index_date, name='index_date'),
+    url(r'^date/(?P<month>\w+)/(?P<year>\d+)/$', views.index, name='index'),
     url(r'^transaction/(?P<tid>\d+)/$', views.transaction, name='transaction'),
     url(r'^account/(?P<aid>\d+)/$', views.account, name='account'),
     url(r'^addtransaction/$', views.addtransaction, name='addtransaction'),

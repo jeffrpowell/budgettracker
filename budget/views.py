@@ -9,7 +9,10 @@ from budget.models import Transaction, Account, AccountCategory, TransactionForm
 import datetime
 
 def map_categories(categories):
-    data = []
+    data = {}
+    entries = []
+    proj_total = Decimal(0.0)
+    act_total = Decimal(0.0)
     for cat in categories:
         entry = {'cat': cat}
         accounts = Account.objects.filter(category=cat)
@@ -17,16 +20,27 @@ def map_categories(categories):
         for acct in accounts:
             projections = Transaction.objects.filter(to_account=acct).filter(prediction=True)
             if projections:
-            	proj_total = projections[0].amount
+            	proj = projections[0].amount
+            	proj_total += proj
             else:
-            	proj_total = Decimal(0.00)
-            acct_entry = {'acct': acct, 'pred': proj_total, 'diff': proj_total-acct.balance}
+            	proj = Decimal(0.00)
+            acct_entry = {'acct': acct, 'pred': proj, 'diff': proj_total-acct.balance}
             all_accounts.append(acct_entry)
+            act_total += acct.balance
         entry['accounts'] = all_accounts
-        data.append(entry)
+        entries.append(entry)
+    data['categories'] = entries
+    data['act_total'] = act_total
+    data['proj_total'] = proj_total
+    data['difference'] = proj_total - act_total
     return data
 
-def index_date(request, month, year):
+def index(request, month=None, year=None):
+    today = datetime.date.today()
+    if (not month):
+        month = today.strftime('%b')
+    if (not year):
+        year = today.year
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True))
@@ -34,12 +48,6 @@ def index_date(request, month, year):
     context['month'] = month
     context['year'] = year
     return render(request, 'budget/index.html', context)
-
-def index(request):
-    today = datetime.date.today()
-    month = today.strftime('%b')
-    year = today.year
-    return index_date(request, month, year)
 
 def transaction(request, tid):
     trans = get_object_or_404(Transaction, pk=tid)

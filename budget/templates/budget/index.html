@@ -35,8 +35,18 @@
 				</div>
 				<table class="table table-bordered panel-body">
 					<tr><th></th><th>Projected</th><th>Actual</th><th class="default-bg">Difference</th></tr>
-					<tr><th>Income</th><td>$0</td><td>$0</td><td class="default-bg">$0</td></tr>
-					<tr><th>Expenses</th><td>$0</td><td>$0</td><td class="default-bg">$0</td></tr>
+					<tr>
+						<th>Income</th>
+						<td>${{ income_categories.proj_total }}</td>
+						<td>${{ income_categories.act_total }}</td>
+						<td class="default-bg">${{ income_categories.difference }}</td>
+					</tr>
+					<tr>
+						<th>Expenses</th>
+						<td>${{ expense_categories.proj_total }}</td>
+						<td>${{ expense_categories.act_total }}</td>
+						<td class="default-bg">${{ expense_categories.difference }}</td>
+					</tr>
 					<tr class="default-bg"><th>Month Balance</th><td>$0</td><td>$0</td><td>$0</td></tr>
 				</table>
 			</div>
@@ -51,10 +61,10 @@
 							<h3 class="panel-title">Income Sources</h3>
 						</div>
 					</a>
-					<div  id="collapseOne" class="panel-collapse collapse">
+					<div  id="collapseOne" class="panel-collapse collapse in">
 						<table class="table table-bordered panel-body">
 						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
-						{% for category in income_categories %}
+						{% for category in income_categories.categories %}
 							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
@@ -81,10 +91,10 @@
 							<h3 class="panel-title">Expenses</h3>
 						</div>
 					</a>
-					<div  id="collapseTwo" class="panel-collapse collapse">
+					<div  id="collapseTwo" class="panel-collapse collapse in">
 						<table class="table table-bordered panel-body">
 						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
-						{% for category in expense_categories %}
+						{% for category in expense_categories.categories %}
 							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
