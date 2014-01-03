@@ -136,14 +136,20 @@ def addtransaction(request, to_account=None):
             trans.save()
             trans.to_account.balance = trans.to_account.balance + trans.amount
             trans.to_account.save()
-            trans.from_account.balance = trans.from_account.balance - trans.amount
+            if trans.to_account.category.income_accounts:
+                trans.from_account.balance = trans.from_account.balance + trans.amount
+            else:
+                trans.from_account.balance = trans.from_account.balance - trans.amount
             trans.from_account.save()
             return HttpResponseRedirect('/budget/')
     else:
         context['form'] = TransactionForm()
+    template = 'budget/addtransaction.html'
     if to_account:
     	context['to_account'] = Account.objects.get(pk=to_account)
-   	return render(request, 'budget/addtransaction.html', context)
+    	if context['to_account'].category.income_accounts:
+    	    template = 'budget/adddeposit.html'
+   	return render(request, template, context)
    	
 def set_projection(request):
 	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True)
