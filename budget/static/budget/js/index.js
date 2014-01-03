@@ -54,8 +54,14 @@ $(function(){
 		$(this).select(); 
 	});
 	
-	//Start by hiding textboxes
-	$('.change-projection-text').hide();
+	//Actions to execute when page loads
+	$('.change-projection-text').hide(); //hide textboxes
+	$('td:contains("-")').each(function(){
+		var text = $(this).text().replace(/\$/, '');
+		if ($.isNumeric(text)){
+			$(this).addClass('negative'); //color negative values
+		}
+	});
 	
 	//What happens when "Change Projection" link is clicked
 	$('.change-projection-link').click(function(){

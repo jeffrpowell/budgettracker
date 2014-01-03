@@ -45,6 +45,9 @@ def index(request, month=None, year=None):
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True))
     context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False))
+    context['proj_total'] = context['income_categories']['proj_total'] - context['expense_categories']['proj_total'];
+    context['act_total'] = context['income_categories']['act_total'] - context['expense_categories']['act_total'];
+    context['difference'] = context['income_categories']['difference'] - context['expense_categories']['difference'];
     context['month'] = month
     context['year'] = year
     return render(request, 'budget/index.html', context)

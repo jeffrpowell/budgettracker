@@ -38,3 +38,7 @@
 .glyphicon-chevron-left, .glyphicon-chevron-right{
 	cursor: pointer;
 }
+
+.negative {
+	color: #D9534F;
+}
