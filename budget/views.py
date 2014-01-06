@@ -166,6 +166,11 @@ def addaccount(request, cid=None):
         context['form'] = AddAccountForm()
         context['category'] = get_object_or_404(AccountCategory, pk=cid)
    	return render(request, 'budget/addaccount.html', context)
+   	
+def deleteaccount(request, aid):
+    acct = Account.objects.get(pk=aid)
+    acct.delete()
+    return HttpResponseRedirect('/budget/')
     
 def category(request, cid):
 	category = get_object_or_404(AccountCategory, pk=cid)

@@ -79,4 +79,14 @@ $(function(){
 	$('.change-projection-text input').focus(function(){
 		$(this).select(); 
 	});
+	
+	//Verify Account Deletion
+	$('.account-delete-link').click(function(){
+		if(confirm('Are you sure you want to delete "'+$(this).parents('tr').children().first().text()+'"?')){
+			//Ok button pressed...
+		}
+		else{
+			return false;
+		}
+	});
 });
