@@ -66,7 +66,8 @@
 						<table class="table table-bordered panel-body">
 						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
 						{% for category in income_categories.categories %}
-							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
+							<tr><td colspan="4"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>
+								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
 									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
@@ -96,7 +97,8 @@
 						<table class="table table-bordered panel-body">
 						<tr><th>Category</th><th>Projected</th><th>Actual</th><th>Difference</th><th>Actions</th></tr>
 						{% for category in expense_categories.categories %}
-							<tr><td colspan="5"><h4>{{ category.cat.name }}</h4></td></tr>
+							<tr><td colspan="4"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>
+								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
 									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>

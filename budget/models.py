@@ -42,3 +42,8 @@ class NullAccountTransactionForm(ModelForm):
 			bank_category = AccountCategory.objects.get(name='Bank Accounts')
 			self.fields['from_account'].queryset = Account.objects.filter(category=bank_category)
 			self.fields['to_account'].queryset = Account.objects.filter(category=bank_category)
+
+class AddAccountForm(ModelForm):
+	class Meta:
+		model = Account
+		fields = ['name']

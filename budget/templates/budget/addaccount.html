@@ -1,0 +1,31 @@
+{% extends "budget/base.html" %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'budget:category' category.id %}">{{ category.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h2>New Account Under {{ category.name }}</h2>
+			<br /><br />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3">
+			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+			<form role="form" action="{% url 'budget:addaccount' category.id %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="id_name">Name:</label>
+					<input type="text" name="name" maxlength="200" id="id_name" class="form-control">
+				</div>
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" value="Save" />
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+
+
