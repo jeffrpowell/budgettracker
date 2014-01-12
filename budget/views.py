@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.serializers import serialize
 from django.utils import simplejson as json
 
-from budget.models import Transaction, Account, AccountCategory, TransactionForm, NullAccountTransactionForm, AddAccountForm
+from budget.models import Transaction, Account, AccountCategory, TransactionForm, NullAccountTransactionForm, AddAccountForm, EditTransactionForm
 import datetime
 
 def month_abbr_to_int(month):
@@ -127,8 +127,17 @@ def index(request, month=None, year=None):
     context['year'] = year
     return render(request, 'budget/index.html', context)
 
-def transaction(request, tid):
+def transaction(request, tid, aid):
     trans = get_object_or_404(Transaction, pk=tid)
+	context = {}
+    if request.method == 'POST':
+        form = EditTransactionForm(request.POST)
+        if form.is_valid():
+            f = EditTransactionForm(request.POST)
+            return HttpResponseRedirect('/budget/account/'+aid)
+    else:
+        context['form'] = EditTransactionForm()
+        context['category'] = get_object_or_404(AccountCategory, pk=cid)
     return render(request, 'budget/transaction.html', {'trans': trans})
 
 def account(request, aid, month=None, year=None):

@@ -5,28 +5,28 @@
 {% endblock %}
 
 {% block content %}
-	<div class="row">
-	{% if trans %}
-		<div class="col-xs-4">
-			<h3>Date</h3>
-			{{ trans.date }}
-			<h3>Amount</h3>
-			${{ trans.amount }}
+	{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+	<form role="form" action="{% url 'budget:addtransaction' %}" method="post">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col-xs-4">
+				<h3>Date</h3>
+				{{ trans.date }}
+				<h3>Amount</h3>
+				${{ trans.amount }}
+			</div>
+			<div class="col-xs-4">
+				<h3>From</h3>
+				<a href="{% url 'budget:account' trans.from_account.id %}">{{ trans.from_account }}</a>
+				<h3>To</h3>
+				<a href="{% url 'budget:account' trans.to_account.id %}">{{ trans.to_account }}</a>
+			</div>
 		</div>
-		<div class="col-xs-4">
-			<h3>From</h3>
-			<a href="{% url 'budget:account' trans.from_account.id %}">{{ trans.from_account }}</a>
-			<h3>To</h3>
-			<a href="{% url 'budget:account' trans.to_account.id %}">{{ trans.to_account }}</a>
+		<div class="row">
+			<div class="col-xs-8">
+				<h3>Memo</h3>
+				{{ trans.memo }}
+			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-8">
-			<h3>Memo</h3>
-			{{ trans.memo }}
-		</div>
-	{% else %}
-		Empty Transaction
-	{% endif %}
-	</div>
+	</form>
 {% endblock %}
