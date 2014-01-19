@@ -1,31 +1,51 @@
 {% extends "budget/base.html" %}
 
 {% block breadcrumb %}
-	<li class="active"><a href="{% url 'budget:transaction' trans.id %}">Transaction</a></li>
+	<li><a href="{% url 'budget:category' category.id %}">{{ category.name }}</a></li>
+	<li><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></li>
+	<li class="active"><a href="{% url 'budget:transaction' trans.id acct.id %}">Transaction</a></li>
 {% endblock %}
 
 {% block content %}
 	{% if error_message %}<p>{{ error_message }}</p>{% endif %}
-	<form role="form" action="{% url 'budget:addtransaction' %}" method="post">
+	<form role="form" action="{% url 'budget:transaction' trans.id acct.id %}" method="post">
 		{% csrf_token %}
 		<div class="row">
-			<div class="col-xs-4">
-				<h3>Date</h3>
-				{{ trans.date }}
-				<h3>Amount</h3>
-				${{ trans.amount }}
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label>Date:</label>
+					<br />{{ trans.date }}
+				</div>
+				<div class="form-group">
+					<label for="id_amount">Amount:</label>
+					<input type="number" step="0.01" name="amount" id="id_amount" value="{{ trans.amount }}" class="form-control">
+				</div>
 			</div>
 			<div class="col-xs-4">
-				<h3>From</h3>
-				<a href="{% url 'budget:account' trans.from_account.id %}">{{ trans.from_account }}</a>
-				<h3>To</h3>
-				<a href="{% url 'budget:account' trans.to_account.id %}">{{ trans.to_account }}</a>
+				<div class="form-group">
+					<label>From:</label>
+					<br /><a href="{% url 'budget:account' trans.from_account.id %}">{{ trans.from_account }}</a>
+				</div>
+				<div class="form-group">
+					<label>To:</label>
+					<br /><a href="{% url 'budget:account' trans.to_account.id %}">{{ trans.to_account }}</a>
+				</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-8">
-				<h3>Memo</h3>
-				{{ trans.memo }}
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="id_memo">Memo:</label>
+					<input type="text" name="memo" maxlength="300" id="id_memo" value="{{ trans.memo }}" class="form-control">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-1">
+				<input type="submit" class="btn btn-primary" value="Save">
+			</div>
+			<div class="col-xs-1">
+				<a href="{% url 'budget:transactiondelete' trans.id %}" class="btn btn-danger">Delete</a>
 			</div>
 		</div>
 	</form>

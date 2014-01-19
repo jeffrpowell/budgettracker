@@ -129,7 +129,7 @@ def index(request, month=None, year=None):
 
 def transaction(request, tid, aid):
     trans = get_object_or_404(Transaction, pk=tid)
-	context = {}
+    context = {}
     if request.method == 'POST':
         form = EditTransactionForm(request.POST)
         if form.is_valid():
@@ -137,8 +137,10 @@ def transaction(request, tid, aid):
             return HttpResponseRedirect('/budget/account/'+aid)
     else:
         context['form'] = EditTransactionForm()
-        context['category'] = get_object_or_404(AccountCategory, pk=cid)
-    return render(request, 'budget/transaction.html', {'trans': trans})
+        context['trans'] = trans
+        context['acct'] = get_object_or_404(Account, pk=aid)
+        context['category'] = context['acct'].category
+    return render(request, 'budget/transaction.html', context)
 
 def account(request, aid, month=None, year=None):
     account = get_object_or_404(Account, pk=aid)
@@ -238,6 +240,21 @@ def banktransaction(request):
     else:
         context['form'] = NullAccountTransactionForm()
    	return render(request, 'budget/banktransaction.html', context)
+
+def transaction_delete(request, tid):
+	trans = get_object_or_404(Transaction, pk=tid)
+	if trans.from_account.is_income():
+		trans.from_account.balance = trans.from_account.balance - trans.amount
+		redir = '/budget/account/' + str(trans.from_account.id)
+	else:
+		trans.from_account.balance = trans.from_account.balance + trans.amount
+		redir = '/budget/account/' + str(trans.to_account.id)
+	trans.to_account.balance = trans.to_account.balance - trans.amount
+	trans.from_account.save()
+	trans.to_account.save()
+	trans.delete()
+	return HttpResponseRedirect(redir)
+	
    	
 def set_projection(request):
 	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True)

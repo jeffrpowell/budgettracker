@@ -34,7 +34,7 @@ class TransactionForm(ModelForm):
 class EditTransactionForm(ModelForm):
     class Meta:
     	model = Transaction
-    	fields = ['date', 'amount', 'memo', 'to_account', 'from_account']
+    	fields = ['amount', 'memo', 'to_account', 'from_account']
 
 class NullAccountTransactionForm(ModelForm):
 	class Meta:
