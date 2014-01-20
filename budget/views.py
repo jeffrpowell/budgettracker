@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.serializers import serialize
 from django.utils import simplejson as json
 
-from budget.models import Transaction, Account, AccountCategory, TransactionForm, NullAccountTransactionForm, AddAccountForm, EditTransactionForm
+from budget.models import Transaction, Account, AccountCategory, TransactionForm, NullAccountTransactionForm, AddAccountForm
 import datetime
 
 def month_abbr_to_int(month):
@@ -131,12 +131,27 @@ def transaction(request, tid, aid):
     trans = get_object_or_404(Transaction, pk=tid)
     context = {}
     if request.method == 'POST':
-        form = EditTransactionForm(request.POST)
+        form = TransactionForm(request.POST)
         if form.is_valid():
-            f = EditTransactionForm(request.POST)
+            old_trans = Transaction.objects.get(id=tid)
+            old_amount = trans.amount
+            f = TransactionForm(request.POST)
+            new_trans = f.save(commit = False)
+            trans.prediction = False
+            if old_trans.from_account.is_income():
+                old_trans.from_account.balance = old_trans.from_account.balance - old_amount + new_trans.amount
+            else:
+                old_trans.from_account.balance = old_trans.from_account.balance + old_amount - new_trans.amount
+            old_trans.to_account.balance = old_trans.to_account.balance - old_amount + new_trans.amount
+            old_trans.to_account.save()
+            old_trans.from_account.save()
+            old_trans.amount = new_trans.amount
+            old_trans.memo = new_trans.memo
+            old_trans.save()
+            
             return HttpResponseRedirect('/budget/account/'+aid)
     else:
-        context['form'] = EditTransactionForm()
+        context['form'] = TransactionForm()
         context['trans'] = trans
         context['acct'] = get_object_or_404(Account, pk=aid)
         context['category'] = context['acct'].category
