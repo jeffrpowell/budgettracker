@@ -22,7 +22,8 @@
 				<td>{{ t.memo }}</td>
 				<td><a href="{% url 'budget:transaction' t.id account.id %}">Edit</a></td></tr>
 			{% endfor %}
-			<tr><td colspan="2"></td><td><strong>Balance:</strong></td><td>${{ balance }}</td><td colspan="2"></td></tr>
+			<tr><td></td><td><strong>Monthly Balance:</strong></td><td>${{ balance }}</td><td colspan="3"></td></tr>
+			<tr><td></td><td><strong>Overall Balance:</strong></td><td>${{ account.balance }}</td><td colspan="3"></td></tr>
 			</table>
 		</div>
 		<div class="col-xs-3 text-center">
