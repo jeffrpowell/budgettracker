@@ -1,8 +1,8 @@
 {% extends "budget/base.html" %}
 
 {% block breadcrumb %}
-	<li><a href="{% url 'budget:category' account.category.id %}">{{ to_account.category.name }}</a></li>
-	<li><a href="{% url 'budget:account' account.id %}">{{ to_account.name }}</a></li>
+	<li><a href="{% url 'budget:category' account.category.id %}">{{ account.category.name }}</a></li>
+	<li><a href="{% url 'budget:account' account.id %}">{{ account.name }}</a></li>
 {% endblock %}
 
 {% block content %}

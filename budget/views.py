@@ -175,6 +175,7 @@ def account(request, aid, month=None, year=None):
     	'balance': amounts['actual'],
     	'month': month,
     	'year': year,
+    	'bank': account.category.name == 'Bank Accounts',
     })
 
 def addaccount(request, cid=None):

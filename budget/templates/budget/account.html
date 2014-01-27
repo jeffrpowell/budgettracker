@@ -29,6 +29,12 @@
 		<div class="col-xs-3 text-center">
 			<h3>Select Date</h3>
 			{% include "budget/month_selection.html" %}
+			<br />
+			{% if bank %}
+			<a href="{% url 'budget:banktransaction' %}" class="btn btn-success">Transfer Funds</a>
+			{% else %}
+			<a href="{% url 'budget:addtransaction' account.id %}" class="btn btn-success">Add New Transaction</a>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}
