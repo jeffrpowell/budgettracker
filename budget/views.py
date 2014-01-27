@@ -206,7 +206,7 @@ def category(request, cid):
 		'accounts': accounts
 	})
 
-def addtransaction(request, to_account=None):
+def addtransaction(request, to_account):
     context = {}
     if request.method == 'POST':
         form = TransactionForm(request.POST)
@@ -214,15 +214,15 @@ def addtransaction(request, to_account=None):
             f = TransactionForm(request.POST)
             trans = f.save(commit = False)
             trans.prediction = False
-            account = Account.objects.get(pk=request.POST['account'])
+            account = Account.objects.get(pk=to_account)
             if account.is_income():
-                trans.to_account = Account.objects.get(name="Checking Account")
+                trans.to_account = trans.from_account
                 trans.from_account = account
                 trans.save()
                 trans.from_account.balance = trans.from_account.balance + trans.amount
             else:
                 trans.to_account = account
-                trans.from_account = Account.objects.get(name="Checking Account")
+                #trans.from_account already set through form
                 trans.save()
                 trans.from_account.balance = trans.from_account.balance - trans.amount
             trans.to_account.balance = trans.to_account.balance + trans.amount

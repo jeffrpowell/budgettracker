@@ -7,7 +7,6 @@ urlpatterns = patterns('',
     url(r'^date/(?P<month>\w+)/(?P<year>\d+)/$', views.index, name='index'),
     
     url(r'^transaction/(?P<tid>\d+)/(?P<aid>\d+)/$', views.transaction, name='transaction'),
-    url(r'^addtransaction/$', views.addtransaction, name='addtransaction'),
     url(r'^addtransaction/(?P<to_account>\d+)/$', views.addtransaction, name='addtransaction'),
     url(r'^banktransaction/$', views.banktransaction, name='banktransaction'),
 	url(r'^transaction/delete/(?P<tid>\d+)/$', views.transaction_delete, name='transactiondelete'),
