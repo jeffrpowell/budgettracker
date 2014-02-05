@@ -18,6 +18,10 @@
 			<form role="form" action="{% url 'budget:addtransaction' account.id %}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
+					<label for="id_date">Date:</label>
+					{{ form.date }}
+				</div>
+				<div class="form-group">
 					<label for="id_from_account">Deposit into:</label>
 					{{ form.from_account }}
 				</div>
@@ -39,4 +43,6 @@
 	</div>
 {% endblock %}
 
-
+{% block javascript %}
+	<script src="/static/budget/js/transaction.js" type="text/javascript" ></script>
+{% endblock %}

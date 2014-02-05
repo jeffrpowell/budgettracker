@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm
+from django.forms import ModelForm, extras
 
 class AccountCategory(models.Model):
 	name = models.CharField(max_length=30)
@@ -17,7 +17,7 @@ class Account(models.Model):
 		return self.category.income_accounts
 
 class Transaction(models.Model):
-	date = models.DateField(auto_now_add=True)
+	date = models.DateField()
 	to_account = models.ForeignKey(Account, related_name="to_account")
 	from_account = models.ForeignKey(Account, related_name="from_account")
 	amount = models.DecimalField(max_digits=7, decimal_places=2)
@@ -29,10 +29,21 @@ class Transaction(models.Model):
 class TransactionForm(ModelForm):
 	class Meta:
 		model = Transaction
-		fields = ['from_account', 'amount', 'memo']
+		fields = ['date', 'amount', 'memo']
+		widgets = {
+			'date': extras.SelectDateWidget(),
+		}
+                
+class AddTransactionForm(ModelForm):
+	class Meta:
+		model = Transaction
+		fields = ['date', 'from_account', 'amount', 'memo']
+		widgets = {
+			'date': extras.SelectDateWidget(),
+		}
 	#http://stackoverflow.com/questions/962226/need-help-with-django-modelform-how-to-filter-foreignkey-manytomanyfield
 	def __init__(self, *args, **kwargs):
-		super(TransactionForm, self).__init__(*args, **kwargs)
+		super(AddTransactionForm, self).__init__(*args, **kwargs)
 		if self.instance:
 			bank_category = AccountCategory.objects.get(name='Bank Accounts')
 			self.fields['from_account'].queryset = Account.objects.filter(category=bank_category)
@@ -40,7 +51,10 @@ class TransactionForm(ModelForm):
 class NullAccountTransactionForm(ModelForm):
 	class Meta:
 		model = Transaction
-		fields = ['from_account', 'to_account', 'amount', 'memo']
+		fields = ['date', 'from_account', 'to_account', 'amount', 'memo']
+		widgets = {
+			'date': extras.SelectDateWidget(),
+		}
 	#http://stackoverflow.com/questions/962226/need-help-with-django-modelform-how-to-filter-foreignkey-manytomanyfield
 	def __init__(self, *args, **kwargs):
 		super(NullAccountTransactionForm, self).__init__(*args, **kwargs)
