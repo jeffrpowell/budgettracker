@@ -8,34 +8,34 @@ from django.utils import simplejson as json
 from budget.models import Transaction, Account, AccountCategory, TransactionForm, AddTransactionForm, NullAccountTransactionForm, AddAccountForm
 import datetime
 
-def month_abbr_to_int(month):
+def month_abbr_to_int(month, previous_month):
 	if month == 'Jan':
-		return 1
+		return 12 if previous_month else 1
 	if month == 'Feb':
-		return 2
+		return 1 if previous_month else 2
 	if month == 'Mar':
-		return 3
+		return 2 if previous_month else 3
 	if month == 'Apr':
-		return 4
+		return 3 if previous_month else 4
 	if month == 'May':
-		return 5
+		return 4 if previous_month else 5
 	if month == 'Jun':
-		return 6
+		return 5 if previous_month else 6
 	if month == 'Jul':
-		return 7
+		return 6 if previous_month else 7
 	if month == 'Aug':
-		return 8
+		return 7 if previous_month else 8
 	if month == 'Sep':
-		return 9
+		return 8 if previous_month else 9
 	if month == 'Oct':
-		return 10
+		return 9 if previous_month else 10
 	if month == 'Nov':
-		return 11
+		return 10 if previous_month else 11
 	if month == 'Dec':
-		return 12
+		return 11 if previous_month else 12
 
 def start_end_days_of_month(month_str, year_str):
-	month = month_abbr_to_int(month_str)
+	month = month_abbr_to_int(month_str, False)
 	year = int(year_str)
 	start_date = datetime.date(year, month, 1)
 	if (month_str == 'Feb'):
@@ -116,13 +116,19 @@ def index(request, month=None, year=None):
         month = today.strftime('%b')
     if (not year):
         year = today.year
+    prev_month = int(month_abbr_to_int(month, True))
+    year_income = year
+    if prev_month == 1:
+        year_income = int(year) - 1
+    month_income = datetime.date(int(year_income), int(prev_month), 1)
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
     context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
+    context['prev_income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month_income.strftime('%b'), year_income, True)
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year, True)
     context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year, False)
-    context['proj_total'] = context['income_categories']['proj_total'] - context['expense_categories']['proj_total'];
-    context['act_total'] = context['income_categories']['act_total'] - context['expense_categories']['act_total'];
-    context['difference'] = context['expense_categories']['difference'] - context['income_categories']['difference'];
+    context['proj_total'] = context['prev_income_categories']['proj_total'] - context['expense_categories']['proj_total'];
+    context['act_total'] = context['prev_income_categories']['act_total'] - context['expense_categories']['act_total'];
+    context['difference'] = context['expense_categories']['difference'] - context['prev_income_categories']['difference'];
     context['month'] = month
     context['year'] = year
     return render(request, 'budget/index.html', context)
