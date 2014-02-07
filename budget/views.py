@@ -93,13 +93,16 @@ def map_categories(categories, month, year, income):
         entry = {'cat': cat}
         accounts = Account.objects.filter(category=cat)
         all_accounts = []
+        subtotal = 0
         for acct in accounts:
             data = get_account_amounts_by_date(acct.id, month, year)
             proj_total += data['proj']
             acct_entry = {'acct': acct, 'pred': data['proj'], 'act': data['actual'], 'diff': data['diff']}
             all_accounts.append(acct_entry)
             act_total += data['actual']
+            subtotal += data['actual']
         entry['accounts'] = all_accounts
+        entry['subtotal'] = subtotal
         entries.append(entry)
     data['categories'] = entries
     data['act_total'] = act_total
@@ -118,7 +121,7 @@ def index(request, month=None, year=None):
         year = today.year
     prev_month = int(month_abbr_to_int(month, True))
     year_income = year
-    if prev_month == 1:
+    if prev_month == 12:
         year_income = int(year) - 1
     month_income = datetime.date(int(year_income), int(prev_month), 1)
     bank_category = AccountCategory.objects.get(name='Bank Accounts')
@@ -126,9 +129,9 @@ def index(request, month=None, year=None):
     context['prev_income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month_income.strftime('%b'), year_income, True)
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year, True)
     context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year, False)
-    context['proj_total'] = context['prev_income_categories']['proj_total'] - context['expense_categories']['proj_total'];
-    context['act_total'] = context['prev_income_categories']['act_total'] - context['expense_categories']['act_total'];
-    context['difference'] = context['expense_categories']['difference'] - context['prev_income_categories']['difference'];
+    context['proj_total'] = context['prev_income_categories']['categories'][0]['subtotal'] - context['expense_categories']['proj_total'];
+    context['act_total'] = context['prev_income_categories']['categories'][0]['subtotal'] - context['expense_categories']['act_total'];
+    context['difference'] = context['expense_categories']['difference'] - context['prev_income_categories']['categories'][0]['subtotal'];
     context['month'] = month
     context['year'] = year
     return render(request, 'budget/index.html', context)
