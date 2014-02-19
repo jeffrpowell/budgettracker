@@ -62,7 +62,7 @@ $(function(){
 					month: $('#month-buttons button.active').attr('id'), 
 					year: $('#year-select').text().replace(/"/, '').trim()
 				};
-				$.post('projection/', post_data, function(data){
+				$.post('/budget/projection/', post_data, function(data){
 					if (data || data == 0){
 						$('td#diff_'+this_id).text('$'+data); //Update Difference amount
 					}

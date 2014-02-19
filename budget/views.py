@@ -39,7 +39,10 @@ def start_end_days_of_month(month_str, year_str):
 	year = int(year_str)
 	start_date = datetime.date(year, month, 1)
 	if (month_str == 'Feb'):
-		end_date = datetime.date(year, month, 28)
+		if year%4 == 0 and (year%100 != 0 or year%400 == 0):
+			end_date = datetime.date(year, month, 29)
+		else:
+			end_date = datetime.date(year, month, 28)
 	elif (month_str in ['Jan', 'Mar', 'May', 'Jul', 'Aug', 'Oct', 'Dec']):
 		end_date = datetime.date(year, month, 31)
 	else:
@@ -281,13 +284,15 @@ def transaction_delete(request, tid):
 	
    	
 def set_projection(request):
-	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True)
+	proj_date = datetime.date(int(request.POST['year']), month_abbr_to_int(request.POST['month'], False), 1).strftime('%Y-%m-%d')
+	trans = Transaction.objects.filter(to_account=request.POST['account_id']).filter(prediction=True).filter(date=proj_date)
 	if trans:
 		trans = trans[0]
 		trans.amount = request.POST['amount']
 		trans.save()
 	else:
 		trans = Transaction()
+		trans.date = proj_date
 		trans.to_account = Account.objects.get(pk=request.POST['account_id'])
 		trans.from_account = Account.objects.get(name="Checking Account")
 		trans.prediction = True
