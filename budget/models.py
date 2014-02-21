@@ -4,6 +4,7 @@ from django.forms import ModelForm, extras
 class AccountCategory(models.Model):
 	name = models.CharField(max_length=30)
 	income_accounts = models.NullBooleanField()
+	goal_accounts = models.BooleanField(default=False)
 	def __unicode__(self):
 		return self.name
 	
@@ -11,6 +12,7 @@ class Account(models.Model):
 	name = models.CharField(max_length=200)
 	balance = models.DecimalField(max_digits=8, decimal_places=2)
 	category = models.ForeignKey(AccountCategory)
+	goal = models.DecimalField(max_digits=8, decimal_places=2)
 	def __unicode__(self):
 		return self.name
 	def is_income(self):

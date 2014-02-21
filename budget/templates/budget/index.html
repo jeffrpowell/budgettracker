@@ -56,6 +56,9 @@
 					<h3 class="panel-title">Goals</h3>
 				</div>
 				<table class="table table-bordered panel-body">
+					{% for acct in goals %}
+					<tr><td>{{ acct.name }}: {{ acct.progress }}/{{ acct.goal }}</td></tr>
+					{% endfor %}
 				</table>
 			</div>
 		</div>

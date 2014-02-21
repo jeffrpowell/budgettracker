@@ -116,6 +116,19 @@ def map_categories(categories, month, year, income):
         data['difference'] = proj_total - act_total
     return data
 
+def get_goals_context():
+	goal_category = AccountCategory.objects.get(goal_accounts=True)
+	goal_accounts = Account.objects.filter(category=goal_category)
+	ret = []
+	for acct in goal_accounts:
+		info = {}
+		info['name'] = acct.name
+		info['id'] = acct.id
+		info['progress'] = acct.balance
+		info['goal'] = acct.goal
+		ret.append(info)
+	return ret
+
 def index(request, month=None, year=None):
     today = datetime.date.today()
     if (not month):
@@ -137,6 +150,7 @@ def index(request, month=None, year=None):
     context['difference'] = context['expense_categories']['difference'] - context['prev_income_categories']['categories'][0]['subtotal'];
     context['month'] = month
     context['year'] = year
+    context['goals'] = get_goals_context()
     return render(request, 'budget/index.html', context)
 
 def transaction(request, tid, aid):
