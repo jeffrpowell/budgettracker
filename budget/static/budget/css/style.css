@@ -42,3 +42,32 @@
 .negative {
 	color: #D9534F;
 }
+
+.bar {
+    position: relative;
+    border: 1px solid black;
+    color: black;
+    display: block;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    height: 35px;
+    line-height: 35px;
+    background: linear-gradient(to right, #FFFFFF 0%, #BBFFBB 100%);
+    margin-bottom: 5px;
+}
+
+.bar > span {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(to right, #CBFFCB 0%, #00CC55 100%);
+}
+
+.bar > p {
+    display: inline;
+    position: relative;
+    z-index: 1;
+}

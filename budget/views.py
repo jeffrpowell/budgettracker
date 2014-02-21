@@ -126,6 +126,9 @@ def get_goals_context():
 		info['id'] = acct.id
 		info['progress'] = acct.balance
 		info['goal'] = acct.goal
+		info['percent'] = int(acct.balance / acct.goal)
+		if info['percent'] > 100:
+			info['percent'] = 100
 		ret.append(info)
 	return ret
 
