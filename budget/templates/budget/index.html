@@ -92,6 +92,7 @@
 									<td>${{ acct.act }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
 											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a> / 
+											<a href="{% url 'budget:editaccount' acct.acct.id %}" class="account-edit-link">Edit Account</a> / 
 											<a href="{% url 'budget:deleteaccount' acct.acct.id %}" class="account-delete-link">Delete Account</a></td></tr>
 							{% endfor %}
 						{% endfor %}
@@ -124,6 +125,7 @@
 									<td>${{ acct.act }}</td><td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a> / 
 											<a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Change Projection</a> / 
+											<a href="{% url 'budget:editaccount' acct.acct.id %}" class="account-edit-link">Edit Account</a> / 
 											<a href="{% url 'budget:deleteaccount' acct.acct.id %}" class="account-delete-link">Delete Account</a></td></tr>
 							{% endfor %}
 						{% endfor %}

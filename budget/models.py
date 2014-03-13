@@ -69,3 +69,8 @@ class AddAccountForm(ModelForm):
 	class Meta:
 		model = Account
 		fields = ['name']
+
+class EditAccountForm(ModelForm):
+	class Meta:
+		model = Account
+		fields = ['name', 'balance', 'category', 'goal']

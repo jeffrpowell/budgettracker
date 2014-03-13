@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^account/(?P<aid>\d+)/$', views.account, name='account'),
     url(r'^account/(?P<aid>\d+)/date/(?P<month>\w+)/(?P<year>\d+)/$', views.account, name='account'),
     url(r'^account/add/(?P<cid>\d+)/$', views.addaccount, name='addaccount'),
+    url(r'^account/edit/(?P<aid>\d+)/$', views.editaccount, name='editaccount'),
     url(r'^account/delete/(?P<aid>\d+)/$', views.deleteaccount, name='deleteaccount'),
     
     url(r'^category/(?P<cid>\d+)/$', views.category, name='category'),

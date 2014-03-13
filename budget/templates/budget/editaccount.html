@@ -1,0 +1,46 @@
+{% extends "budget/base.html" %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'budget:category' category.id %}">{{ category.name }}</a></li>
+	<li class="active"><a href="{% url 'budget:account' account.id %}">{{ account.name }}</a></li>
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h2>Edit "{{ account.name }}" Account</h2>
+			<br /><br />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3">
+			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+			<form role="form" action="{% url 'budget:editaccount' category.id %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="id_name">Name:</label>
+					<input type="text" name="name" maxlength="200" id="id_name" class="form-control" value="{{ account.name }}">
+				</div>
+				<div class="form-group">
+					<label for="id_category">Category:</label>
+					{{ form.category }}
+				</div>
+				<div class="form-group">
+					<label for="id_balance">Current Balance ($):</label>
+					<input id="id_balance" type="number" step="0.01" name="balance" class="form-control" value="{{ account.balance }}">
+				</div>
+				{% if category.goal_accounts %}
+				<div class="form-group">
+					<label for="id_goal">End Goal ($):</label>
+					<input id="id_goal" type="number" step="0.01" name="goal" class="form-control" value="{{ account.goal }}">
+				</div>
+				{% endif %}
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" value="Save" />
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+
+
