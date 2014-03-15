@@ -235,10 +235,15 @@ def editaccount(request, aid):
     if request.method == 'POST':
         form = EditAccountForm(request.POST)
         if form.is_valid():
-            acct = form.save(commit = False)
+            acct = Account.objects.get(pk=aid)
+            acct.name = request.POST['name']
+            acct.category = AccountCategory.objects.get(pk=request.POST['category'])
             acct.balance = request.POST['balance']
             if 'goal' in request.POST:
                 acct.goal = request.POST['goal']
+            else:
+                acct.goal = 0
+            
             acct.save()
             return HttpResponseRedirect('/budget/')
     else:

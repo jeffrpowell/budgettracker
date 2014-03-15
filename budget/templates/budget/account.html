@@ -31,14 +31,28 @@
 			</table>
 		</div>
 		<div class="col-xs-3 text-center">
-			<h3>Select Date</h3>
-			{% include "budget/month_selection.html" %}
+			<div class="row">
+				<div class="col-xs-12">
+					<h3>Select Date</h3>
+					{% include "budget/month_selection.html" %}
+				</div>
+			</div>
 			<br />
-			{% if bank %}
-			<a href="{% url 'budget:banktransaction' %}" class="btn btn-success">Transfer Funds</a>
-			{% else %}
-			<a href="{% url 'budget:addtransaction' account.id %}" class="btn btn-success">Add New Transaction</a>
-			{% endif %}
+			<div class="row">
+				<div class="col-xs-12">
+					{% if bank %}
+						<a href="{% url 'budget:banktransaction' %}" class="btn btn-success">Transfer Funds</a>
+					{% else %}
+						<a href="{% url 'budget:addtransaction' account.id %}" class="btn btn-success">Add New Transaction</a>
+					{% endif %}
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<div class="col-xs-12">
+					<a href="{% url 'budget:editaccount' account.id %}" class="btn btn-warning">Edit Account</a>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}

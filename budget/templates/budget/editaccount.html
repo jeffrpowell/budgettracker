@@ -15,7 +15,7 @@
 	<div class="row">
 		<div class="col-xs-3">
 			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
-			<form role="form" action="{% url 'budget:editaccount' category.id %}" method="post">
+			<form role="form" action="{% url 'budget:editaccount' account.id %}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
 					<label for="id_name">Name:</label>
