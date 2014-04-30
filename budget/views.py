@@ -129,7 +129,7 @@ def get_goals_context():
 		info['id'] = acct.id
 		info['progress'] = acct.balance
 		info['goal'] = acct.goal
-		info['percent'] = int(acct.balance / acct.goal)
+		info['percent'] = int(acct.balance * 100 / acct.goal)
 		if info['percent'] > 100:
 			info['percent'] = 100
 		ret.append(info)
@@ -137,10 +137,13 @@ def get_goals_context():
 
 def index(request, month=None, year=None):
     today = datetime.date.today()
+    month_persist = True
     if (not month):
         month = today.strftime('%b')
+        month_persist = False
     if (not year):
         year = today.year
+        month_persist = False
     prev_month = int(month_abbr_to_int(month, True))
     year_income = year
     if prev_month == 12:
@@ -159,6 +162,7 @@ def index(request, month=None, year=None):
     context['act_total'] = income['act'] - context['expense_categories']['act_total']
     context['month'] = month
     context['year'] = year
+    context['month_persist'] = month_persist
     context['goals'] = get_goals_context()
     return render(request, 'budget/index.html', context)
 
@@ -194,10 +198,13 @@ def transaction(request, tid, aid):
 def account(request, aid, month=None, year=None):
     account = get_object_or_404(Account, pk=aid)
     today = datetime.date.today()
+    month_persist = True
     if (not month):
         month = today.strftime('%b')
+        month_persist = False
     if (not year):
         year = today.year
+        month_persist = False
     dates = start_end_days_of_month(month, year)
     
     transactions = Transaction.objects.filter(to_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1])) | Transaction.objects.filter(from_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
@@ -209,6 +216,7 @@ def account(request, aid, month=None, year=None):
     	'balance': amounts['actual'],
     	'month': month,
     	'year': year,
+    	'month_persist': month_persist,
     	'bank': account.category.name == 'Bank Accounts',
     })
 
@@ -239,10 +247,7 @@ def editaccount(request, aid):
             acct.name = request.POST['name']
             acct.category = AccountCategory.objects.get(pk=request.POST['category'])
             acct.balance = request.POST['balance']
-            if 'goal' in request.POST:
-                acct.goal = request.POST['goal']
-            else:
-                acct.goal = 0
+            acct.goal = request.POST['goal']
             
             acct.save()
             return HttpResponseRedirect('/budget/')

@@ -2,7 +2,7 @@
 
 {% block breadcrumb %}
 	<li><a href="{% url 'budget:category' account.category.id %}">{{ account.category.name }}</a></li>
-	<li class="active"><a href="{% url 'budget:account' account.id %}">{{ account.name }}</a></li>
+	<li class="active"><a href="{% if month_persist %}{% url 'budget:account' account.id month year %}{% else %}{% url 'budget:account' account.id %}{% endif %}">{{ account.name }}</a></li>
 {% endblock %}
 
 {% block content %}

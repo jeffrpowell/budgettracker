@@ -11,7 +11,7 @@
 				<table class="table table-bordered panel-body">
 					<tr><th>Accounts</th><th class="text-right">Balance</th></tr>
 					{% for acct in bank_category.accounts %}
-						<tr><td><a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a></td><td class="text-right">${{ acct.balance }}</td></tr>
+						<tr><td><a href="{% if month_persist %}{% url 'budget:account' acct.id month year %}{% else %}{% url 'budget:account' acct.id %}{% endif %}">{{ acct.name }}</a></td><td class="text-right">${{ acct.balance }}</td></tr>
 					{% endfor %}
 					<tr><td colspan="2" class="text-right"><a href="/budget/banktransaction/">Transfer Funds</a></td></tr>
 				</table>
@@ -25,11 +25,11 @@
 				</div>
 				<div class="panel-body">
 					{% for acct in goals %}
-					<a href="{% url 'budget:account' acct.id %}">{{ acct.name }}</a>
-					<div class="bar">
-						<p>${{ acct.progress }} out of ${{ acct.goal }}</p>
-						<span style="width: {{ acct.percent }}%"></span>
-					</div>
+						<a href="{% if month_persist %}{% url 'budget:account' acct.id month year %}{% else %}{% url 'budget:account' acct.id %}{% endif %}">{{ acct.name }}</a>
+						<div class="bar">
+							<p>${{ acct.progress }} out of ${{ acct.goal }}</p>
+							<span style="width: {{ acct.percent }}%"></span>
+						</div>
 					{% endfor %}
 				</div>
 			</div>
@@ -50,6 +50,7 @@
 					<h3 class="panel-title">Summary</h3>
 				</div>
 				<table class="table table-bordered panel-body">
+					<caption>Income reflects Tithable Incomes from the previous month and Help Funds from this month</caption>
 					<tr><th></th><th>Projected</th><th>Actual</th><th class="default-bg">Difference</th></tr>
 					<tr>
 						<th>Income</th>
@@ -85,7 +86,7 @@
 								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
-									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
+									<td><a href="{% if month_persist %}{% url 'budget:account' acct.acct.id month year%}{% else %}{% url 'budget:account' acct.acct.id %}{% endif %}">{{ acct.acct.name }}</a></td>
 									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
@@ -118,7 +119,7 @@
 								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
 							{% for acct in category.accounts %}
 								<tr>
-									<td><a href="{% url 'budget:account' acct.acct.id %}">{{ acct.acct.name }}</a></td>
+									<td><a href="{% if month_persist %}{% url 'budget:account' acct.acct.id month year%}{% else %}{% url 'budget:account' acct.acct.id %}{% endif %}">{{ acct.acct.name }}</a></td>
 									<td id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="10"></td>
