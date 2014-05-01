@@ -18,6 +18,17 @@ class Account(models.Model):
 	def is_income(self):
 		return self.category.income_accounts
 
+class SubAccount(models.Model):
+	name = models.CharField(max_length=200)
+	balance = models.DecimalField(max_digits=8, decimal_places=2)
+	parent_account = models.ForeignKey(Account, related_name="parent_account")
+	goal = models.DecimalField(max_digits=8, decimal_places=2)
+	goal_account = models.BooleanField(default=True)
+	def __unicode__(self):
+		return self.name
+	def is_goal(self):
+		return goal_acount
+
 class Transaction(models.Model):
 	date = models.DateField()
 	to_account = models.ForeignKey(Account, related_name="to_account")

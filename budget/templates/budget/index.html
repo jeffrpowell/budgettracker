@@ -2,7 +2,7 @@
 
 {% block content %}
 	<div class="row">
-		<div class="col-xs-3">
+		<div class="col-xs-4">
 			<br />
 			<div class="panel panel-primary">
 				<div class="panel-heading">
@@ -35,7 +35,7 @@
 			</div>
 			
 		</div>
-		<div class="col-xs-5">
+		<div class="col-xs-4">
 			<br />
 			<div class="panel">
 				<div class="panel-heading default-bg">
@@ -51,20 +51,16 @@
 				</div>
 				<table class="table table-bordered panel-body">
 					<caption>Income reflects Tithable Incomes from the previous month and Help Funds from this month</caption>
-					<tr><th></th><th>Projected</th><th>Actual</th><th class="default-bg">Difference</th></tr>
 					<tr>
 						<th>Income</th>
-						<td>${{ income.proj }}</td>
-						<td>${{ income.act }}</td>
-						<td class="default-bg">${{ income.difference }}</td>
+						<td colspan="2" class="center">${{ income.act }}</td>
 					</tr>
+					<tr><th rowspan="2">Expenses</th><th>Projected</th><th>Actual</th></tr>
 					<tr>
-						<th>Expenses</th>
 						<td>${{ expense_categories.proj_total }}</td>
 						<td>${{ expense_categories.act_total }}</td>
-						<td class="default-bg">${{ expense_categories.difference }}</td>
 					</tr>
-					<tr class="default-bg"><th>Month Balance</th><td>${{ proj_total }}</td><td>${{ act_total }}</td><td></td></tr>
+					<tr class="default-bg"><th>Month Balance</th><td>${{ proj_total }}</td><td>${{ act_total }}</td></tr>
 				</table>
 			</div>
 		</div>

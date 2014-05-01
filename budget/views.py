@@ -159,7 +159,7 @@ def index(request, month=None, year=None):
         'act': context['income_categories']['act_total'] - context['income_categories']['categories'][0]['act_subtotal'] + context['prev_income_categories']['categories'][0]['act_subtotal']}
     income['difference'] = income['act'] - income['proj']
     context['income'] = income
-    context['proj_total'] = income['proj'] - context['expense_categories']['proj_total']
+    context['proj_total'] = income['act'] - context['expense_categories']['proj_total']
     context['act_total'] = income['act'] - context['expense_categories']['act_total']
     context['month'] = month
     context['year'] = year
