@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     
     url(r'^transaction/(?P<tid>\d+)/(?P<aid>\d+)/$', views.transaction, name='transaction'),
     url(r'^addtransaction/(?P<to_account>\d+)/$', views.addtransaction, name='addtransaction'),
+	url(r'^addtransactions/$', views.addtransactions, name='addtransactions'),
     url(r'^banktransaction/$', views.banktransaction, name='banktransaction'),
 	url(r'^transaction/delete/(?P<tid>\d+)/$', views.transaction_delete, name='transactiondelete'),
     

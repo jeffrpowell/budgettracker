@@ -270,6 +270,9 @@ def category(request, cid):
 		'accounts': accounts
 	})
 
+def addtransactions(request):
+	return render(request, 'budget/addtransactions.html', {})
+
 def addtransaction(request, to_account):
     context = {}
     if request.method == 'POST':
