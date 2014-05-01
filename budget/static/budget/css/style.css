@@ -77,3 +77,23 @@ caption {
     position: relative;
     z-index: 1;
 }
+
+td.no-left-border {
+	border-left: 0px none black !important;
+}
+
+td.no-right-border {
+	border-right: 0px none black !important;
+}
+
+th.center, td.center {
+	text-align: center;
+}
+
+th.left, td.left {
+	text-align: left;
+}
+
+th.right, td.right {
+	text-align: right;
+}
