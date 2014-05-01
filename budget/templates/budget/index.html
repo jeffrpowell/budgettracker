@@ -53,7 +53,7 @@
 					<caption>Income reflects Tithable Incomes from the previous month and Help Funds from this month</caption>
 					<tr>
 						<th>Income</th>
-						<td colspan="2" class="center">${{ income.act }}</td>
+						<td colspan="2" class="text-center">${{ income.act }}</td>
 					</tr>
 					<tr><th rowspan="2">Expenses</th><th>Projected</th><th>Actual</th></tr>
 					<tr>
@@ -76,7 +76,7 @@
 					</a>
 					<div id="collapseOne" class="panel-collapse collapse in">
 						<table class="table table-bordered panel-body">
-						<tr><th>Category</th><th class="center" colspan="2">Projected</th><th class="center" colspan="2">Actual</th><th class="center">Difference</th><th>Actions</th></tr>
+						<tr><th>Category</th><th class="text-center" colspan="2">Projected</th><th class="text-center" colspan="2">Actual</th><th class="text-center">Difference</th><th>Actions</th></tr>
 						{% for category in income_categories.categories %}
 							<tr><td colspan="6"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>
 								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
@@ -86,9 +86,9 @@
 									<td id="proj_{{ acct.acct.id }}" class="no-right-border">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text no-right-border">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="5"></td>
-									<td class="no-left-border right"><a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Edit</a></td>
+									<td class="no-left-border text-right"><a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Edit</a></td>
 									<td class="no-right-border">${{ acct.act }}</td>
-									<td class="no-left-border right"><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a></td>
+									<td class="no-left-border text-right"><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a></td>
 									<td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:editaccount' acct.acct.id %}" class="account-edit-link">Edit Account</a> / 
 										<a href="{% url 'budget:deleteaccount' acct.acct.id %}" class="account-delete-link">Delete Account</a></td></tr>
@@ -110,7 +110,7 @@
 					</a>
 					<div  id="collapseTwo" class="panel-collapse collapse in">
 						<table class="table table-bordered panel-body">
-						<tr><th>Category</th><th class="center" colspan="2">Projected</th><th class="center" colspan="2">Actual</th><th class="center">Difference</th><th>Actions</th></tr>
+						<tr><th>Category</th><th class="text-center" colspan="2">Projected</th><th class="text-center" colspan="2">Actual</th><th class="text-center">Difference</th><th>Actions</th></tr>
 						{% for category in expense_categories.categories %}
 							<tr><td colspan="6"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>
 								<td><a href="{% url 'budget:addaccount' category.cat.id %}">Add Account</a></td></tr>
@@ -120,9 +120,9 @@
 									<td class="no-right-border" id="proj_{{ acct.acct.id }}">${{ acct.pred }}</td>
 									<td id="proj_text_{{ acct.acct.id }}" class="change-projection-text no-right-border">{% csrf_token %}
 										$<input type="number" step="0.01" id="proj_input_{{ acct.acct.id }}" size="5"></td>
-									<td class="no-left-border right"><a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Edit</a></td>
+									<td class="no-left-border text-right"><a href="#" class="change-projection-link" id="link_{{ acct.acct.id }}">Edit</a></td>
 									<td class="no-right-border">${{ acct.act }}</td>
-									<td class="no-left-border right"><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a></td>
+									<td class="no-left-border text-right"><a href="{% url 'budget:addtransaction' acct.acct.id %}">Add</a></td>
 									<td id="diff_{{ acct.acct.id }}">${{ acct.diff }}</td>
 									<td><a href="{% url 'budget:editaccount' acct.acct.id %}" class="account-edit-link">Edit Account</a> / 
 										<a href="{% url 'budget:deleteaccount' acct.acct.id %}" class="account-delete-link">Delete Account</a></td></tr>
