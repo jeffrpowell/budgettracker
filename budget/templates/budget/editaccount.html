@@ -21,7 +21,7 @@
 	{% endif %}
 	<div class="row">
 		<div class="col-xs-3">
-			{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+			{% if error %}<p>{{ error }}</p>{% endif %}
 			<form role="form" action="{% url 'budget:editaccount' account.id %}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
@@ -33,17 +33,22 @@
 					{{ form.category }}
 				</div>
 				<div class="form-group">
+					<label for="id_parent_account">Make this account a subset of </label>
+					{{ form.parent_account }}
+				</div>
+				<div class="form-group">
 					<label for="id_balance">Current Balance ($):</label>
 					<input id="id_balance" type="number" step="0.01" name="balance" class="form-control" value="{{ account.balance }}">
 				</div>
-				{% if category.goal_accounts %}
+				<div class="checkbox">
+					<label> 
+						{{ form.goal_account }} Will this be a goal account?
+					</label>
+				</div>
 				<div class="form-group">
-					<label for="id_goal">End Goal ($):</label>
-					<input id="id_goal" type="number" step="0.01" name="goal" class="form-control" value="{{ account.goal }}">
-				</div
-				{% else %}
-				<input id="id_goal" type="hidden" name="goal" value="0">
-				{% endif %}
+					<label for="id_goal">End Goal ($):</label> 
+					<input type="number" step="0.01" name="goal" id="id_goal" class="form-control" value="{{ account.goal }}">
+				</div>
 				<div class="form-group">
 					<input type="submit" class="btn btn-primary" value="Save" />
 				</div>
@@ -52,4 +57,30 @@
 	</div>
 {% endblock %}
 
-
+{% block javascript %}
+	<script type="text/javascript">
+		jQuery(function($){
+			$('#id_goal_account').click(function(){
+				if ($(this).prop('checked') == true){
+					$('#id_goal').prop('disabled', false);
+				}
+				else{
+					$('#id_goal').val(0);
+					$('#id_goal').prop('disabled', true);
+				}
+			});
+			
+			$('#id_category').click(function(){
+				if ($(this).val() == 2){
+					$('#id_parent_account').prop('disabled', false);
+				}
+				else{
+					$('#id_parent_account').val('');
+					$('#id_parent_account').prop('disabled', true);
+				}
+			});
+			
+			$('#id_category').trigger('click');
+		});
+	</script>
+{% endblock %}

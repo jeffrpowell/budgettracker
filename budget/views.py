@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.serializers import serialize
 from django.utils import simplejson as json
 
-from budget.models import Transaction, Account, AccountCategory, TransactionForm, AddTransactionForm, NullAccountTransactionForm, AddAccountForm, EditAccountForm
+from budget.models import Transaction, Account, AccountCategory, TransactionForm, AddTransactionForm, NullAccountTransactionForm, AccountForm
 import datetime
 
 def month_abbr_to_int(month, previous_month):
@@ -120,21 +120,45 @@ def map_categories(categories, month, year, income):
     return data
 
 def get_goals_context():
-	goal_category = AccountCategory.objects.get(goal_accounts=True)
-	goal_accounts = Account.objects.filter(category=goal_category)
-	ret = []
-	for acct in goal_accounts:
-		info = {}
-		info['name'] = acct.name
-		info['id'] = acct.id
-		info['progress'] = acct.balance
-		info['goal'] = acct.goal
-		info['percent'] = int(acct.balance * 100 / acct.goal)
-		if info['percent'] > 100:
-			info['percent'] = 100
-		ret.append(info)
-	return ret
+    goal_accounts = Account.objects.filter(goal_account=True)
+    ret = []
+    for acct in goal_accounts:
+        info = {}
+        info['name'] = acct.name
+        info['id'] = acct.id
+        info['progress'] = acct.balance
+        info['goal'] = acct.goal
+        if (acct.goal > 0):
+            info['percent'] = int(acct.balance * 100 / acct.goal)
+        else:
+            info['percent'] = 0
+        if info['percent'] > 100:
+            info['percent'] = 100
+        ret.append(info)
+    return ret
 
+def map_bank_balances():
+    bank_category = AccountCategory.objects.get(name='Bank Accounts')
+    bank_dict = {'cat': bank_category, 'debug': {}, 'accounts': []}
+    accts = Account.objects.filter(category=bank_category)
+    
+    accounts = {}
+    subaccounts = []
+    accounts_ordered = []
+    for acct in accts:
+        if not acct.parent_account:
+            accounts[acct.id] = acct
+            accounts_ordered.append(acct.id)
+        else:
+            subaccounts.append(acct)
+            
+    for acct in subaccounts:
+        accounts[acct.parent_account.id].balance = accounts[acct.parent_account.id].balance + acct.balance
+    
+    for aid in accounts_ordered:
+        bank_dict['accounts'].append(accounts[aid])
+    return bank_dict
+    
 def index(request, month=None, year=None):
     today = datetime.date.today()
     month_persist = True
@@ -149,8 +173,7 @@ def index(request, month=None, year=None):
     if prev_month == 12:
         year_income = int(year) - 1
     month_income = datetime.date(int(year_income), int(prev_month), 1)
-    bank_category = AccountCategory.objects.get(name='Bank Accounts')
-    context = {'bank_category': {'cat': bank_category, 'accounts': Account.objects.filter(category=bank_category)}}
+    context = {'bank_category': map_bank_balances()}
     context['prev_income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month_income.strftime('%b'), year_income, True)
     context['income_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=True), month, year, True)
     context['expense_categories'] = map_categories(AccountCategory.objects.filter(income_accounts=False), month, year, False)
@@ -198,6 +221,20 @@ def transaction(request, tid, aid):
 
 def account(request, aid, month=None, year=None):
     account = get_object_or_404(Account, pk=aid)
+    context = {'account': account, 
+               'total_balance': account.balance, 
+               'bank': account.category.name == 'Bank Accounts', 
+               'can_add_subaccts': not account.parent_account, 
+               'subaccounts': Account.objects.filter(parent_account=account.id)
+               }
+    page = ''
+    if account.is_bank() and not account.parent_account:
+        page = 'budget/bankaccount.html'
+        subaccts = Account.objects.filter(parent_account=account.id)
+        for acct in subaccts:
+            context['total_balance'] = context['total_balance'] + acct.balance
+    else:
+        page = 'budget/account.html'
     today = datetime.date.today()
     month_persist = True
     if (not month):
@@ -206,27 +243,23 @@ def account(request, aid, month=None, year=None):
     if (not year):
         year = today.year
         month_persist = False
+    context['month'] = month
+    context['year'] = year
+    context['month_persist'] = month_persist
     dates = start_end_days_of_month(month, year)
     
-    transactions = Transaction.objects.filter(to_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1])) | Transaction.objects.filter(from_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
+    context['transactions'] = Transaction.objects.filter(to_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1])) | Transaction.objects.filter(from_account=aid).filter(prediction=False).filter(date__range=(dates[0], dates[1]))
     
     amounts = get_account_amounts_by_date(aid, month, year)
-    return render(request, 'budget/account.html', {
-    	'account': account,
-    	'transactions': transactions,
-    	'balance': amounts['actual'],
-    	'month': month,
-    	'year': year,
-    	'month_persist': month_persist,
-    	'bank': account.category.name == 'Bank Accounts',
-    })
+    context['balance'] = amounts['actual']
+    return render(request, page, context)
 
 def addaccount(request, cid=None):
     context = {}
     if request.method == 'POST':
-        form = AddAccountForm(request.POST)
+        form = AccountForm(request.POST)
         if form.is_valid():
-            f = AddAccountForm(request.POST)
+            f = AccountForm(request.POST)
             acct = f.save(commit = False)
             acct.category = AccountCategory.objects.get(pk=cid)
             acct.balance = 0
@@ -235,28 +268,52 @@ def addaccount(request, cid=None):
             acct.save()
             return HttpResponseRedirect('/budget/')
     else:
-        context['form'] = AddAccountForm()
+        context['form'] = AccountForm()
         context['category'] = get_object_or_404(AccountCategory, pk=cid)
    	return render(request, 'budget/addaccount.html', context)
+	
+def addsubaccount(request, aid):
+    context = {'parent_account': get_object_or_404(Account, pk=aid)}
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            acct = form.save(commit = False)
+            acct.parent_account = context['parent_account']
+            acct.save()
+            return HttpResponseRedirect('/budget/account/'+aid)
+        elif 'goal_account' not in request.POST:
+            acct = form.save(commit = False)
+            acct.goal = 0
+            acct.goal_account = 0
+            acct.parent_account = context['parent_account']
+            acct.save()
+            return HttpResponseRedirect('/budget/account/'+aid)
+    context['form'] = AccountForm()
+    context['category'] = get_object_or_404(AccountCategory, pk=(context['parent_account'].category.id))
+    return render(request, 'budget/addsubaccount.html', context)
 
 def editaccount(request, aid):
     context = {'account': get_object_or_404(Account, pk=aid)}
     if request.method == 'POST':
-        form = EditAccountForm(request.POST)
-        if form.is_valid():
-            acct = Account.objects.get(pk=aid)
-            acct.name = request.POST['name']
-            acct.category = AccountCategory.objects.get(pk=request.POST['category'])
-            acct.balance = request.POST['balance']
-            acct.goal = request.POST['goal']
-            
-            acct.save()
-            return HttpResponseRedirect('/budget/')
-    else:
-        context['form'] = EditAccountForm(instance = context['account'])
-        context['category'] = get_object_or_404(AccountCategory, pk=(context['account'].category.id))
-   	return render(request, 'budget/editaccount.html', context)
-   	
+        form = AccountForm(request.POST)
+        acct = Account.objects.get(pk=aid)
+        acct.name = request.POST['name']
+        acct.category = AccountCategory.objects.get(pk=request.POST['category'])
+        acct.balance = request.POST['balance']
+        acct.goal = request.POST['goal']
+        if ('goal_account' in request.POST):
+            acct.goal_account = request.POST['goal_account']
+        else:
+            acct.goal_account = 0
+        if (request.POST['parent_account']):
+            acct.parent_account = Account.objects.get(pk=request.POST['parent_account'])
+        acct.save()
+        return HttpResponseRedirect('/budget/')
+    
+    context['form'] = AccountForm(instance = context['account'])
+    context['category'] = get_object_or_404(AccountCategory, pk=(context['account'].category.id))
+    return render(request, 'budget/editaccount.html', context)
+
 def deleteaccount(request, aid):
     acct = Account.objects.get(pk=aid)
     acct.delete()
