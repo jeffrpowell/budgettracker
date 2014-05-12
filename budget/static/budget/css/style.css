@@ -85,3 +85,7 @@ td.no-left-border {
 td.no-right-border {
 	border-right: 0px none black !important;
 }
+
+.strikethrough {
+	text-decoration: line-through;
+}

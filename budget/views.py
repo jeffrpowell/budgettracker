@@ -190,6 +190,10 @@ def index(request, month=None, year=None):
     context['goals'] = get_goals_context()
     return render(request, 'budget/index.html', context)
 
+def alltransactions(request):
+    context = {'transactions': Transaction.objects.order_by('-date')}
+    return render(request, 'budget/alltransactions.html', context)
+    
 def transaction(request, tid, aid):
     trans = get_object_or_404(Transaction, pk=tid)
     context = {}

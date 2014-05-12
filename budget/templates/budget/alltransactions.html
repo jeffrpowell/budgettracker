@@ -1,0 +1,27 @@
+{% extends "budget/base.html" %}
+
+{% block breadcrumb %}
+	<li><a href="{% url 'budget:alltransactions' %}" class="active">All Transactions</a></li>
+	<li><a href="{% url 'budget:addtransactions' %}" class="strikethrough">Add Transactions</a></li>
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-9">
+			<h2>All Transactions</h2>
+            <small>Sorted by date</small>
+			<br /><br />
+			<table class="table">
+			<tr><th>Date</th><th>From Account</th><th>To Account</th><th>Balance</th><th>Memo</th><th>Edit</th></tr>
+			{% for t in transactions %}
+				<tr><td>{{ t.date }}</td>
+				<td><a href="{% url 'budget:account' t.from_account.id %}">{{ t.from_account }}</a></td>
+				<td><a href="{% url 'budget:account' t.to_account.id %}">{{ t.to_account }}</a></td>
+                <td>${{ t.amount }}</td>
+				<td>{{ t.memo }}</td>
+				<td><a href="{% url 'budget:transaction' t.id t.from_account.id %}">Edit</a></td></tr>
+			{% endfor %}
+			</table>
+		</div>
+	</div>
+{% endblock %}
