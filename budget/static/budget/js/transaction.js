@@ -13,4 +13,5 @@ $(function(){
 	$('#id_date_month').val(date.getMonth()+1);
 	$('#id_date_day').val(date.getDate());
 	$('#id_date_year').val(date.getFullYear());
+    $('#id_from_account').val(2);
 });
