@@ -7,7 +7,7 @@
 
 {% block content %}
 	<div class="row">
-		<div class="col-xs-4">
+		<div class="col-xs-6 col-md-4">
 			<br />
 			<div class="panel panel-primary">
 				<div class="panel-heading">
@@ -24,7 +24,7 @@
 				</table>
 			</div>
 		</div>
-		<div class="col-xs-4">
+		<div class="col-xs-6 col-md-4">
 			<br />
 			<div class="panel panel-success">
 				<div class="panel-heading">
@@ -44,33 +44,39 @@
 			</div>
 			
 		</div>
-		<div class="col-xs-4">
+		<div class="col-xs-12 col-md-4">
 			<br />
-			<div class="panel">
-				<div class="panel-heading default-bg">
-					<h3 class="panel-title">Select Date</h3>
+			<div class="row">
+				<div class="col-xs-6 col-md-12">
+					<div class="panel">
+						<div class="panel-heading default-bg">
+							<h3 class="panel-title">Select Date</h3>
+						</div>
+						<div class="panel-body text-center">
+							{% include "budget/month_selection.html" %}
+						</div>
+					</div>
 				</div>
-				<div class="panel-body text-center">
-					{% include "budget/month_selection.html" %}
+				<div class="col-xs-6 col-md-12">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">Summary</h3>
+						</div>
+						<table class="table table-bordered panel-body">
+							<caption>Income reflects Tithable Incomes from the previous month and Help Funds from this month</caption>
+							<tr>
+								<th>Income</th>
+								<td colspan="2" class="text-center">${{ income.act }}</td>
+							</tr>
+							<tr><th rowspan="2">Expenses</th><th>Projected</th><th>Actual</th></tr>
+							<tr>
+								<td>${{ expense_categories.proj_total }}</td>
+								<td>${{ expense_categories.act_total }}</td>
+							</tr>
+							<tr class="default-bg"><th>Month Balance</th><td>${{ proj_total }}</td><td>${{ act_total }}</td></tr>
+						</table>
+					</div>
 				</div>
-			</div>
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">Summary</h3>
-				</div>
-				<table class="table table-bordered panel-body">
-					<caption>Income reflects Tithable Incomes from the previous month and Help Funds from this month</caption>
-					<tr>
-						<th>Income</th>
-						<td colspan="2" class="text-center">${{ income.act }}</td>
-					</tr>
-					<tr><th rowspan="2">Expenses</th><th>Projected</th><th>Actual</th></tr>
-					<tr>
-						<td>${{ expense_categories.proj_total }}</td>
-						<td>${{ expense_categories.act_total }}</td>
-					</tr>
-					<tr class="default-bg"><th>Month Balance</th><td>${{ proj_total }}</td><td>${{ act_total }}</td></tr>
-				</table>
 			</div>
 		</div>
 	</div>
