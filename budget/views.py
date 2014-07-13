@@ -266,8 +266,8 @@ def addaccount(request, cid=None):
             acct = form.save(commit = False)
             acct.category = AccountCategory.objects.get(pk=cid)
             acct.balance = 0
-            #if 'goal' in request.POST:
-            #	acct.goal = request.POST['goal']
+            acct.goal_account = False
+            acct.goal = 0
             acct.save()
             return HttpResponseRedirect('/budget/')
     else:
