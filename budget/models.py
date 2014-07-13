@@ -81,3 +81,8 @@ class AccountForm(ModelForm):
 		if self.instance:
 			bank_category = AccountCategory.objects.get(name='Bank Accounts')
 			self.fields['parent_account'].queryset = Account.objects.filter(category=bank_category).filter(parent_account=None)
+
+class AddAccountForm(ModelForm):
+	class Meta:
+		model = Account
+		fields = ['name']

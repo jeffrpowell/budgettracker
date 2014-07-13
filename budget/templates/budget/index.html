@@ -90,7 +90,7 @@
 						</div>
 					</a>
 					<div id="collapseOne" class="panel-collapse collapse in">
-						<table class="table table-bordered panel-body">
+						<table class="table table-bordered">
 						<tr><th>Category</th><th class="text-center" colspan="2">Projected</th><th class="text-center" colspan="2">Actual</th><th class="text-center">Difference</th><th>Actions</th></tr>
 						{% for category in income_categories.categories %}
 							<tr><td colspan="6"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>
@@ -124,7 +124,7 @@
 						</div>
 					</a>
 					<div  id="collapseTwo" class="panel-collapse collapse in">
-						<table class="table table-bordered panel-body">
+						<table class="table table-bordered">
 						<tr><th>Category</th><th class="text-center" colspan="2">Projected</th><th class="text-center" colspan="2">Actual</th><th class="text-center">Difference</th><th>Actions</th></tr>
 						{% for category in expense_categories.categories %}
 							<tr><td colspan="6"><h4><a href="{% url 'budget:category' category.cat.id %}">{{ category.cat.name }}</a></h4></td>

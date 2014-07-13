@@ -20,12 +20,12 @@
 					<label for="id_name">Name:</label>
 					<input type="text" name="name" maxlength="200" id="id_name" class="form-control">
 				</div>
-				{% if category.goal_accounts %}
+				{% comment %}
 				<div class="form-group">
 					<label for="id_goal">End Goal ($):</label>
 					<input id="id_goal" type="number" step="0.01" name="goal" class="form-control">
 				</div>
-				{% endif %}
+				{% endcomment %}
 				<div class="form-group">
 					<input type="submit" class="btn btn-primary" value="Save" />
 				</div>
