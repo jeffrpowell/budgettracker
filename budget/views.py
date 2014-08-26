@@ -280,12 +280,14 @@ def addsubaccount(request, aid):
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
-            acct = form.save(commit = False)
-            acct.parent_account = context['parent_account']
+            acct = form.save(commit=False)
             acct.save()
             return HttpResponseRedirect('/budget/account/'+aid)
-        elif 'goal_account' not in request.POST:
+        else:
+            form = AddAccountForm(request.POST)
             acct = form.save(commit = False)
+            acct.category = get_object_or_404(AccountCategory, pk=(context['parent_account'].category.id))
+            acct.balance = request.POST['balance']
             acct.goal = 0
             acct.goal_account = 0
             acct.parent_account = context['parent_account']
