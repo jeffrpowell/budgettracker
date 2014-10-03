@@ -191,7 +191,7 @@ def index(request, month=None, year=None):
     return render(request, 'budget/index.html', context)
 
 def alltransactions(request):
-    context = {'transactions': Transaction.objects.order_by('-date')}
+    context = {'transactions': Transaction.objects.filter(prediction=False).order_by('-date')}
     return render(request, 'budget/alltransactions.html', context)
     
 def transaction(request, tid, aid):
