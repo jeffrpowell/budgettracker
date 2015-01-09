@@ -39,7 +39,7 @@ class TransactionForm(ModelForm):
 		model = Transaction
 		fields = ['date', 'amount', 'memo']
 		widgets = {
-			'date': extras.SelectDateWidget(),
+			'date': extras.SelectDateWidget(years=['2013','2014','2015','2016']),
 		}
                 
 class AddTransactionForm(ModelForm):
@@ -47,7 +47,7 @@ class AddTransactionForm(ModelForm):
 		model = Transaction
 		fields = ['date', 'from_account', 'amount', 'memo']
 		widgets = {
-			'date': extras.SelectDateWidget(),
+			'date': extras.SelectDateWidget(years=['2013','2014','2015','2016']),
 		}
 	#http://stackoverflow.com/questions/962226/need-help-with-django-modelform-how-to-filter-foreignkey-manytomanyfield
 	def __init__(self, *args, **kwargs):
